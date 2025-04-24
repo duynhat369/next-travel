@@ -1,21 +1,7 @@
 import { connectToDatabase } from '@/lib/db/mongodb';
 import User from '@/lib/models/User';
+import { registerSchema } from '@/lib/schemas/auth';
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
-
-const registerSchema = z
-  .object({
-    username: z.string().min(3).max(50),
-    displayName: z.string().min(2).max(100),
-    email: z.string().email(),
-    password: z.string().min(6),
-    confirmPassword: z.string().min(6),
-    phoneNumber: z.string().optional(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Mật khẩu xác nhận không khớp',
-    path: ['confirmPassword'],
-  });
 
 export async function POST(request: Request) {
   try {

@@ -16,7 +16,6 @@ interface IUser extends Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-// Định nghĩa schema cho user
 const userSchema: Schema<IUser> = new Schema(
   {
     username: {
@@ -25,12 +24,23 @@ const userSchema: Schema<IUser> = new Schema(
       unique: true,
       trim: true,
       minlength: [3, 'Tên đăng nhập phải có ít nhất 3 ký tự'],
+      maxlength: [30, 'Tên đăng nhập không được quá 30 ký tự'],
+      validate: [
+        {
+          validator: function (v) {
+            // Regex kiểm tra chỉ chứa chữ cái và chữ số, không có ký tự đặc biệt và khoảng trắng
+            return /^[a-zA-Z0-9]+$/.test(v);
+          },
+          message: 'Tên đăng nhập chỉ được chứa chữ cái và chữ số.',
+        },
+      ],
     },
     displayName: {
       type: String,
       required: [true, 'Vui lòng nhập tên hiển thị'],
       trim: true,
       minlength: [2, 'Tên hiển thị phải có ít nhất 2 ký tự'],
+      maxlength: [30, 'Tên đăng nhập không được quá 30 ký tự'],
     },
     email: {
       type: String,

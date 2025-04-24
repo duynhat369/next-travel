@@ -11,10 +11,20 @@ import {
 import { ABOUT_US_PAGE, PRODUCTS_PAGE, TOURS_PAGE } from '@/constants';
 import { cn } from '@/lib/utils';
 import { Menu } from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AuthModal } from './auth/AuthModal';
 import { Button } from './ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 interface MenuItem {
   name: string;
@@ -30,6 +40,7 @@ const menuItems: MenuItem[] = [
 
 export const Header = () => {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
 
   return (
     <header className="fixed top-0 right-0 left-0 z-50 px-4 pt-6">
@@ -66,7 +77,43 @@ export const Header = () => {
         </nav>
 
         <div className="hidden md:flex items-center space-x-4 text-sm font-medium">
-          <AuthModal />
+          {session?.user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2 px-2 cursor-pointer focus-visible:ring-0 focus-visible:border-none"
+                >
+                  <span className="text-sm font-medium">{session.user.displayName}</span>
+                  <Image
+                    src={session.user.avatar || '/default-avatar.png'}
+                    alt="Avatar"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 border-none shadow-2xl">
+                <DropdownMenuLabel>Xin chào, {session.user.displayName}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer focus:bg-secondary focus:text-white"
+                  asChild
+                >
+                  <Link href="/profile">Thông tin cá nhân</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer focus:bg-secondary focus:text-white"
+                  onClick={() => signOut()}
+                >
+                  Đăng xuất
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <AuthModal />
+          )}
           <Link
             href="#"
             className="text-white bg-foreground border border-foreground px-3 py-2 rounded-full hover:bg-foreground-secondary transition-colors"
@@ -107,9 +154,13 @@ export const Header = () => {
                       </Link>
                     ))}
 
-                    <Button variant="text" className="block px-0 my-4">
-                      Đăng nhập/ Đăng ký
-                    </Button>
+                    {session?.user ? (
+                      <div className="py-2 text-foreground">{session.user.displayName}</div>
+                    ) : (
+                      <Button variant="text" className="block px-0 my-4">
+                        Đăng nhập/ Đăng ký
+                      </Button>
+                    )}
                     <Link
                       href="#"
                       className="block text-white text-center bg-foreground px-4 py-2 rounded-full hover:bg-foreground-secondary transition-colors"

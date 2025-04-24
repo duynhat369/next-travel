@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { TabsContent } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
-import { LoginFormValues } from '../types';
+import { LoginFormValues } from '../AuthModal';
 
 interface Props {
   registerLogin: UseFormRegister<LoginFormValues>;
@@ -21,7 +21,7 @@ export const LoginForm = ({
   onLoginSubmit,
 }: Props) => {
   return (
-    <TabsContent key="login" value="login">
+    <TabsContent value="login">
       <motion.div
         key="login"
         initial={{ opacity: 0, x: -30 }}
@@ -29,11 +29,7 @@ export const LoginForm = ({
         exit={{ opacity: 0, x: 30 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="border-none">
-          <CardHeader>
-            <CardTitle className="font-bold">Đăng nhập</CardTitle>
-            <CardDescription>Nhập thông tin để đăng nhập</CardDescription>
-          </CardHeader>
+        <Card className="w-full max-w-md mx-auto border-border shadow-lg">
           <CardContent>
             <form id="login-form" onSubmit={onLoginSubmit}>
               <div className="grid gap-4">
