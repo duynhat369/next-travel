@@ -15,6 +15,14 @@ interface IUser extends Document {
   lastLogin: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
+export interface UserResponse {
+  id: string;
+  username: string;
+  displayName: string;
+  email: string;
+  phoneNumber: string;
+  avatar: string;
+}
 
 const userSchema: Schema<IUser> = new Schema(
   {

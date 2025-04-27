@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -15,7 +16,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import axiosClient from '@/lib/axios';
+import { authApi } from '@/lib/api/auth';
+import { AxiosError } from '@/lib/models/Error';
 import {
   LoginFormValues,
   loginSchema,
@@ -25,15 +27,14 @@ import {
 import { useAuthStore } from '@/store/auth';
 import { LogIn, UserPlus } from 'lucide-react';
 import { signIn } from 'next-auth/react';
+import { toast } from 'sonner';
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import { LoginForm } from './components/LoginForm';
 import { RegisterForm } from './components/RegisterForm';
-// import { useToast } from "@/components/ui/use-toast";
 
 export function AuthModal() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  //   const { toast } = useToast();
   const setUser = useAuthStore((state) => state.setUser);
 
   const {
@@ -53,6 +54,7 @@ export function AuthModal() {
     handleSubmit: handleSubmitRegister,
     formState: { errors: registerErrors, isSubmitting: isRegisterSubmitting },
     watch,
+    setError,
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -65,6 +67,66 @@ export function AuthModal() {
     },
   });
   const passwordSignUpWatch = watch('password');
+
+  const { mutate: register } = useMutation({
+    mutationFn: authApi.register,
+    onSuccess: (data, variables) =>
+      toast('Đăng ký thành công', {
+        description: 'Bạn có thể đăng nhập ngay',
+        action: {
+          label: 'Đăng nhập',
+          onClick: async () => {
+            const res = await signIn('credentials', {
+              username: variables.username,
+              password: variables.password,
+              redirect: false,
+            });
+            if (!res?.ok) {
+              throw new Error(res.error || 'Error logging in after registration');
+            }
+
+            // Set user in Zustand store
+            setUser(data.user);
+
+            // Close the modal
+            setOpen(false);
+
+            // Refresh the page to update the UI
+            router.refresh();
+          },
+        },
+      }),
+    onError: (error: unknown) => {
+      const axiosError = error as AxiosError;
+
+      if (axiosError.response && axiosError.response.data) {
+        const { message, fieldErrors } = axiosError.response.data;
+
+        if (fieldErrors) {
+          if (fieldErrors.email) {
+            setError('email', {
+              type: 'manual',
+              message: fieldErrors.email[0] || 'Email này đã được sử dụng',
+            });
+          }
+          if (fieldErrors.username) {
+            setError('username', {
+              type: 'manual',
+              message: fieldErrors.username[0] || 'Tên đăng nhập này đã tồn tại',
+            });
+          }
+        }
+
+        toast('Đăng ký không thành công', {
+          description: message || 'Có lỗi xảy ra',
+        });
+      } else {
+        toast('Đăng ký không thành công', {
+          description: error instanceof Error ? (error as Error).message : 'Có lỗi xảy ra',
+        });
+      }
+    },
+  });
 
   const onLoginSubmit = async (data: LoginFormValues) => {
     try {
@@ -87,75 +149,28 @@ export function AuthModal() {
 
       setOpen(false);
 
-      //   toast({
-      //     title: "Đăng nhập thành công",
-      //     description: `Chào mừng trở lại, ${result.user.displayName}!`,
-      //   });
-      console.log('Đăng nhập thành công');
+      toast('Đăng nhập thành công');
 
       // Refresh the page to update the UI
       router.refresh();
     } catch (error) {
-      //   toast({
-      //     title: "Đăng nhập thất bại",
-      //     description: error instanceof Error ? error.message : "Có lỗi xảy ra",
-      //     variant: "destructive",
-      //   });
-      console.log('Đăng nhập thất bại');
+      toast('Đăng nhập thất bại', {
+        description: error instanceof Error ? error.message : 'Có lỗi xảy ra',
+      });
     }
   };
 
-  const onRegisterSubmit = async (data: RegisterFormValues) => {
-    console.log('️🏆️🏆️ data:', data);
-    try {
-      const { data: result } = await axiosClient.post('/auth/register', data);
-
-      console.log('️🏆️🏆️ result:', result);
-
-      //   toast({
-      //     title: "Đăng ký thành công",
-      //     description: "Bạn có thể đăng nhập ngay bây giờ!",
-      //   });
-
-      // // Optional: Auto login after register
-      // const res = await signIn('credentials', {
-      //   username: data.username,
-      //   password: data.password,
-      //   redirect: false,
-      // });
-      // if (!res?.ok) {
-      //   throw new Error(res.error || 'Error logging in after registration');
-      // }
-
-      // // Set user in Zustand store
-      // setUser(result.user);
-
-      // // Close the modal
-      // setOpen(false);
-
-      // // Refresh the page to update the UI
-      // router.refresh();
-      console.log('Đăng ký thành công');
-    } catch (error) {
-      //   toast({
-      //     title: "Đăng ký thất bại",
-      //     description: error instanceof Error ? error.message : "Có lỗi xảy ra",
-      //     variant: "destructive",
-      //   });
-      console.log('Đăng ký thất bại');
-    }
+  const onRegisterSubmit = (data: RegisterFormValues) => {
+    register(data);
   };
 
   const handleGoogleLogin = async () => {
     try {
       await signIn('google', { callbackUrl: '/' });
     } catch (error) {
-      //   toast({
-      //     title: "Đăng nhập thất bại",
-      //     description: "Có lỗi xảy ra khi đăng nhập với Google",
-      //     variant: "destructive",
-      //   });
-      console.log('Đăng nhập thất bại');
+      toast('Đăng nhập thất bại', {
+        description: 'Có lỗi xảy ra khi đăng nhập với Google',
+      });
     }
   };
 

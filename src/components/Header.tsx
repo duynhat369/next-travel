@@ -84,14 +84,14 @@ export const Header = () => {
                   variant="ghost"
                   className="flex items-center gap-2 px-2 cursor-pointer focus-visible:ring-0 focus-visible:border-none"
                 >
-                  <span className="text-sm font-medium">{session.user.displayName}</span>
-                  <Image
-                    src={session.user.avatar || '/default-avatar.png'}
-                    alt="Avatar"
-                    width={32}
-                    height={32}
-                    className="rounded-full"
-                  />
+                  <div className="relative max-w-8 max-h-8 overflow-hidden rounded-full">
+                    <Image
+                      src={session.user.avatar || '/default-avatar.png'}
+                      alt="Avatar"
+                      width={32}
+                      height={32}
+                    />
+                  </div>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 border-none shadow-2xl">

@@ -1,5 +1,5 @@
 import { connectToDatabase } from '@/lib/db/mongodb';
-import User from '@/lib/models/User';
+import User, { UserResponse } from '@/lib/models/User';
 import { registerSchema } from '@/lib/schemas/auth';
 import { NextResponse } from 'next/server';
 
@@ -25,20 +25,23 @@ export async function POST(request: Request) {
 
     const { username, displayName, email, password, phoneNumber } = validationResult.data;
 
-    // Check if username already exists
-    const existingUsername = await User.findOne({ username });
-    if (existingUsername) {
-      return NextResponse.json(
-        { success: false, message: 'Tên đăng nhập đã tồn tại' },
-        { status: 400 }
-      );
+    const fieldErrors: { [key: string]: string[] } = {};
+
+    if (await User.findOne({ username })) {
+      fieldErrors.username = ['Tên đăng nhập đã tồn tại'];
     }
 
-    // Check if email already exists
-    const existingEmail = await User.findOne({ email });
-    if (existingEmail) {
+    if (await User.findOne({ email })) {
+      fieldErrors.email = ['Email đã được sử dụng'];
+    }
+
+    if (Object.keys(fieldErrors).length > 0) {
       return NextResponse.json(
-        { success: false, message: 'Email đã được sử dụng' },
+        {
+          success: false,
+          message: 'Thông tin đã tồn tại',
+          fieldErrors,
+        },
         { status: 400 }
       );
     }
@@ -54,7 +57,7 @@ export async function POST(request: Request) {
     });
 
     // Return user without password
-    const user = {
+    const user: UserResponse = {
       id: newUser._id.toString(),
       username: newUser.username,
       displayName: newUser.displayName,

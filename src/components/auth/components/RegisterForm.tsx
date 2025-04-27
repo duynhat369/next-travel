@@ -12,13 +12,13 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { TabsContent } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { RegisterFormValues } from '@/lib/schemas/auth';
 import { cn } from '@/lib/utils';
 import { getPasswordStrength } from '@/utils/password';
 import { motion } from 'framer-motion';
 import { AlertCircle, CheckCircle2, Info, Lock, Mail, Phone, User } from 'lucide-react';
 import { useState } from 'react';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
-import { RegisterFormValues } from '../AuthModal';
 
 interface Props {
   password: string;

@@ -1,11 +1,13 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { TabsContent } from '@/components/ui/tabs';
+import { LoginFormValues } from '@/lib/schemas/auth';
 import { motion } from 'framer-motion';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
-import { LoginFormValues } from '../AuthModal';
+import { FcGoogle } from 'react-icons/fc';
 
 interface Props {
   registerLogin: UseFormRegister<LoginFormValues>;
@@ -30,6 +32,10 @@ export const LoginForm = ({
         transition={{ duration: 0.3 }}
       >
         <Card className="w-full max-w-md mx-auto border-border shadow-lg">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Đăng nhập</CardTitle>
+            <CardDescription className="text-center">Điền thông tin để đăng nhập</CardDescription>
+          </CardHeader>
           <CardContent>
             <form id="login-form" onSubmit={onLoginSubmit}>
               <div className="grid gap-4">
@@ -65,6 +71,19 @@ export const LoginForm = ({
                 </Button>
               </div>
             </form>
+            <div className="flex items-center my-4">
+              <Separator className="flex-1" />
+              <span className="px-4 text-sm text-foreground">Hoặc</span>
+              <Separator className="flex-1" />
+            </div>
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center gap-2 transition-colors bg-foreground text-white cursor-pointer hover:bg-foreground-secondary hover:text-white"
+              // onClick={handleGoogleLogin}
+            >
+              <FcGoogle className="w-12 h-12" />
+              Đăng nhập với Google
+            </Button>
           </CardContent>
         </Card>
       </motion.div>

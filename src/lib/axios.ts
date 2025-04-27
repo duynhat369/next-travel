@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
-const axiosClient = axios.create({
+const axiosClient: AxiosInstance = axios.create({
   baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
@@ -8,11 +8,11 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use(
-  function (config) {
+  function (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
     // Do something before request is sent
     return config;
   },
-  function (error) {
+  function (error: any): Promise<any> {
     // Do something with request error
     return Promise.reject(error);
   }
@@ -20,14 +20,11 @@ axiosClient.interceptors.request.use(
 
 // Add a response interceptor
 axiosClient.interceptors.response.use(
-  function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
+  function (response: AxiosResponse): any {
     // Do something with response data
     return response.data;
   },
-  function (error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+  function (error: any): Promise<never> {
     return Promise.reject(error);
   }
 );
