@@ -55,15 +55,15 @@ export const RegisterForm = ({
         exit={{ opacity: 0, x: -30 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="w-full max-w-md mx-auto border-border shadow-lg">
+        <Card className="w-full max-w-md mx-auto border-muted shadow-xl bg-white">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">Đăng ký</CardTitle>
-            <CardDescription className="text-center">
+            <CardDescription className="text-center text-md text-foreground/70">
               Điền thông tin để tạo tài khoản mới
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form id="register-form" onSubmit={onRegisterSubmit} className="space-y-4">
+            <form id="register-form" onSubmit={onRegisterSubmit} className="space-y-4" noValidate>
               <div className="space-y-2">
                 <Label htmlFor="username" className="flex items-center gap-1.5">
                   <RequiredLabel>Tên đăng nhập</RequiredLabel>

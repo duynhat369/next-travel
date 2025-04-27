@@ -5,7 +5,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FcGoogle } from 'react-icons/fc';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -55,6 +54,7 @@ export function AuthModal() {
     formState: { errors: registerErrors, isSubmitting: isRegisterSubmitting },
     watch,
     setError,
+    reset,
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -68,9 +68,44 @@ export function AuthModal() {
   });
   const passwordSignUpWatch = watch('password');
 
+  const { mutate: login } = useMutation({
+    mutationFn: authApi.login,
+    onSuccess: async (data, variables) => {
+      const res = await signIn('credentials', {
+        username: variables.username,
+        password: variables.password,
+        redirect: false,
+      });
+      if (!res?.ok) {
+        throw new Error(res.error || 'Error logging in after registration');
+      }
+
+      // Set user in Zustand store
+      setUser(data.user);
+      // Close the modal
+      setOpen(false);
+      reset();
+      // Refresh the page to update the UI
+      router.refresh();
+    },
+    onError: (error: unknown) => {
+      const axiosError = error as AxiosError;
+      if (axiosError.response && axiosError.response.data) {
+        const { message } = axiosError.response.data;
+        toast('Đăng nhập không thành công', {
+          description: message || 'Có lỗi xảy ra',
+        });
+      } else
+        toast('Đăng nhập không thành công', {
+          description: error instanceof Error ? (error as Error).message : 'Có lỗi xảy ra',
+        });
+
+      console.log(error);
+    },
+  });
   const { mutate: register } = useMutation({
     mutationFn: authApi.register,
-    onSuccess: (data, variables) =>
+    onSuccess: (data, variables) => {
       toast('Đăng ký thành công', {
         description: 'Bạn có thể đăng nhập ngay',
         action: {
@@ -87,15 +122,15 @@ export function AuthModal() {
 
             // Set user in Zustand store
             setUser(data.user);
-
-            // Close the modal
-            setOpen(false);
-
-            // Refresh the page to update the UI
-            router.refresh();
           },
         },
-      }),
+      });
+      // Close the modal
+      setOpen(false);
+      reset();
+      // Refresh the page to update the UI
+      router.refresh();
+    },
     onError: (error: unknown) => {
       const axiosError = error as AxiosError;
 
@@ -128,36 +163,8 @@ export function AuthModal() {
     },
   });
 
-  const onLoginSubmit = async (data: LoginFormValues) => {
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || 'Đăng nhập thất bại');
-      }
-
-      // Set user in Zustand store
-      setUser(result.user);
-
-      setOpen(false);
-
-      toast('Đăng nhập thành công');
-
-      // Refresh the page to update the UI
-      router.refresh();
-    } catch (error) {
-      toast('Đăng nhập thất bại', {
-        description: error instanceof Error ? error.message : 'Có lỗi xảy ra',
-      });
-    }
+  const onLoginSubmit = (data: LoginFormValues) => {
+    login(data);
   };
 
   const onRegisterSubmit = (data: RegisterFormValues) => {
@@ -185,16 +192,7 @@ export function AuthModal() {
       <DialogContent className="max-h-[95vh] pt-12 overflow-y-auto sm:max-w-[500px] bg-white border-none shadow-2xl gap-0">
         <DialogHeader>
           <DialogTitle className="font-bold text-2xl mb-4 sr-only">Tài khoản</DialogTitle>
-          <DialogDescription className="flex flex-col gap-4 text-foreground sr-only">
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2 transition-colors bg-foreground text-white cursor-pointer hover:bg-foreground-secondary hover:text-white"
-              onClick={handleGoogleLogin}
-            >
-              <FcGoogle className="w-12 h-12" />
-              Đăng nhập với Google
-            </Button>
-          </DialogDescription>
+          <DialogDescription className="flex flex-col gap-4 text-foreground sr-only"></DialogDescription>
         </DialogHeader>
 
         <Tabs defaultValue="login" className="w-full gap-4">
@@ -219,6 +217,7 @@ export function AuthModal() {
             loginErrors={loginErrors}
             isLoginSubmitting={isLoginSubmitting}
             onLoginSubmit={handleSubmitLogin(onLoginSubmit)}
+            onGoogleLogin={handleGoogleLogin}
           />
           <RegisterForm
             key={'register'}

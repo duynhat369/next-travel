@@ -31,8 +31,8 @@ export type RegisterFormValues = z.infer<typeof registerSchema>;
 
 // Login schema
 export const loginSchema = z.object({
-  username: z.string().min(3, { message: 'Tên đăng nhập phải có ít nhất 3 ký tự' }),
-  password: z.string().min(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự' }),
+  username: z.string().nonempty('Vui lòng nhập tên đăng nhập'),
+  password: z.string().nonempty('Vui lòng nhập mật khẩu'),
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;

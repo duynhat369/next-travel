@@ -11,6 +11,11 @@ export interface RegisterResponse {
   message: string;
   user: User;
 }
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  user: User;
+}
 export interface ErrorResponse {
   success: false;
   message: string;

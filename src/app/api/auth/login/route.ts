@@ -1,14 +1,9 @@
 import { connectToDatabase } from '@/lib/db/mongodb';
-import User from '@/lib/models/User';
+import User, { UserResponse } from '@/lib/models/User';
+import { loginSchema } from '@/lib/schemas/auth';
 import { sign } from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
-
-const loginSchema = z.object({
-  username: z.string().min(3),
-  password: z.string().min(6),
-});
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const COOKIE_NAME = 'auth-token';
@@ -40,7 +35,7 @@ export async function POST(request: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { success: false, message: 'Tên đăng nhập hoặc mật khẩu không chính xác' },
+        { success: false, message: 'Tên đăng nhập không chính xác' },
         { status: 401 }
       );
     }
@@ -50,7 +45,7 @@ export async function POST(request: Request) {
 
     if (!isPasswordValid) {
       return NextResponse.json(
-        { success: false, message: 'Tên đăng nhập hoặc mật khẩu không chính xác' },
+        { success: false, message: 'Mật khẩu không chính xác' },
         { status: 401 }
       );
     }
@@ -75,7 +70,7 @@ export async function POST(request: Request) {
     });
 
     // Return user data without password
-    const userData = {
+    const userData: UserResponse = {
       id: user._id.toString(),
       username: user.username,
       displayName: user.displayName,
