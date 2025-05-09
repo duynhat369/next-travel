@@ -1,6 +1,7 @@
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import './globals.css';
 import { Providers } from './providers';
 
@@ -22,10 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
-        <Providers>
-          <Toaster />
-          {children}
-        </Providers>
+        <NuqsAdapter>
+          <Providers>
+            <Toaster />
+            {children}
+          </Providers>
+        </NuqsAdapter>
       </body>
     </html>
   );
