@@ -9,11 +9,15 @@ export interface ToursResponse {
   totalPages: number;
 }
 
+export enum TourSortBy {
+  PRICE = 'price',
+  CREATED_AT = 'createdAt',
+}
 export interface TourFilterParams {
   page?: number;
   limit?: number;
   search?: string;
-  sortBy?: 'price' | 'createdAt' | string;
+  sortBy?: TourSortBy;
   sortOrder?: 'asc' | 'desc' | string;
   isHot?: boolean;
   hasDiscount?: boolean;
@@ -25,12 +29,12 @@ export const tourApi = {
     let queryParams: TourFilterParams = {};
 
     if (typeof params === 'number') {
-      queryParams = { page: params, limit: 3 };
+      queryParams = { page: params, limit: 7 };
     } else {
       queryParams = { ...params };
     }
 
-    const { page = 1, limit = 3, search, sortBy, sortOrder, isHot, hasDiscount } = queryParams;
+    const { page = 1, limit = 7, search, sortBy, sortOrder, isHot, hasDiscount } = queryParams;
 
     return axiosClient.get('/tours', {
       params: {

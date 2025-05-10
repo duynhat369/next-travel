@@ -26,9 +26,8 @@ export async function GET(request: NextRequest) {
     const Tour = getTourModel();
     const searchParams = request.nextUrl.searchParams;
 
-    // Pagination parameters
     const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '3', 10);
+    const limit = parseInt(searchParams.get('limit') || '7', 10);
     const skip = (page - 1) * limit;
 
     // Search and filtering parameters

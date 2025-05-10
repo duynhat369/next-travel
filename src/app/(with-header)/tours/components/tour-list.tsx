@@ -2,14 +2,14 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { tourApi } from '@/lib/api/tour';
+import { tourApi, TourSortBy } from '@/lib/api/tour';
 import { Tour } from '@/types/tour.types';
 import { formatCurrency } from '@/utils/currency';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { parseAsBoolean, parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
+import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
 
 import { useEffect, useRef } from 'react';
 
@@ -37,42 +37,44 @@ const itemVariants = {
 };
 
 export default function TourList() {
-  const [{ search: searchTerm, page, sortBy, sortOrder, isHot, hasDiscount }, setQuery] =
-    useQueryStates({
-      page: parseAsInteger.withDefault(1),
-      search: parseAsString.withDefault(''),
-      sortBy: parseAsString.withDefault('createdAt'),
-      sortOrder: parseAsString.withDefault('desc'),
-      isHot: parseAsBoolean.withDefault(false),
-      hasDiscount: parseAsBoolean.withDefault(false),
-    });
+  const [{ search: searchTerm, sortBy, sortOrder, isHot, hasDiscount }, setQuery] = useQueryStates({
+    search: parseAsString.withDefault(''),
+    sortBy: parseAsString.withDefault(TourSortBy.CREATED_AT),
+    sortOrder: parseAsString.withDefault('desc'),
+    isHot: parseAsBoolean.withDefault(false),
+    hasDiscount: parseAsBoolean.withDefault(false),
+  });
   const loadMoreRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(loadMoreRef);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
-    queryKey: ['tours', searchTerm],
-    queryFn: () =>
+    queryKey: ['tours', searchTerm, sortBy, sortOrder, isHot, hasDiscount],
+    queryFn: ({ pageParam = 1 }) =>
       tourApi.getTours({
-        page,
+        page: pageParam,
         search: searchTerm,
-        sortBy,
+        sortBy: sortBy as TourSortBy,
         sortOrder,
         isHot,
         hasDiscount,
       }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      return lastPage.hasMore ? lastPage.currentPage + 1 : undefined;
-    },
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.currentPage + 1 : undefined),
     staleTime: 60000, // Cache data for 1 minute
     refetchOnWindowFocus: false, // Prevent refetching when window regains focus
   });
 
   useEffect(() => {
-    if (isInView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [isInView, fetchNextPage, hasNextPage, isFetchingNextPage]);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
+    return () => observer.disconnect();
+  }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
 
   const tours = data?.pages.flatMap((page) => page.tours) || [];
 
@@ -98,13 +100,9 @@ export default function TourList() {
 
       <div ref={loadMoreRef} className="h-10 flex items-center justify-center">
         {isFetchingNextPage && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            Đang tải thêm...
-          </motion.p>
+          <div className="col-span-full flex justify-center p-4">
+            <div className="w-6 h-6 border-2 border-secondary border-t-transparent rounded-full animate-spin"></div>
+          </div>
         )}
       </div>
     </motion.div>
