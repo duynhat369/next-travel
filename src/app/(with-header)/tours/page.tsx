@@ -1,5 +1,4 @@
-import TourHeader from './components/tour-header';
-import TourList from './components/tour-list';
+import ToursClient from './tours-client';
 
 export async function generateMetadata() {
   return {
@@ -21,10 +20,5 @@ export async function generateMetadata() {
 }
 
 export default function ToursPage() {
-  return (
-    <main className="container mx-auto px-4 py-8 mt-28">
-      <TourHeader />
-      <TourList />
-    </main>
-  );
+  return <ToursClient />;
 }

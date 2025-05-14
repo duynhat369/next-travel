@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
 
     // Search and filtering parameters
     const search = searchParams.get('search') || '';
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    const sortParam = searchParams.get('sort') || 'createdAt_desc';
+    const [sortBy, sortOrder] = sortParam.split('_');
     const isHot = searchParams.get('isHot') === 'true';
     const hasDiscount = searchParams.get('hasDiscount') === 'true';
 
@@ -56,7 +56,9 @@ export async function GET(request: NextRequest) {
 
     // Build sort object
     const sort: any = {};
-    sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
+    if (sortBy) {
+      sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
+    }
 
     // Count total tours matching the filter
     const total = await Tour.countDocuments(filter);

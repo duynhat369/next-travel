@@ -1,17 +1,20 @@
 'use client';
-
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { tourApi, TourSortBy } from '@/lib/api/tour';
 import { Tour } from '@/types/tour.types';
 import { formatCurrency } from '@/utils/currency';
-import { useInfiniteQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { parseAsBoolean, parseAsString, useQueryStates } from 'nuqs';
-
 import { useEffect, useRef } from 'react';
+
+interface Props {
+  tours: Tour[];
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  fetchNextPage: () => void;
+  status: string;
+}
 
 // Animation variants
 const containerVariants = {
@@ -36,32 +39,14 @@ const itemVariants = {
   },
 };
 
-export default function TourList() {
-  const [{ search: searchTerm, sortBy, sortOrder, isHot, hasDiscount }, setQuery] = useQueryStates({
-    search: parseAsString.withDefault(''),
-    sortBy: parseAsString.withDefault(TourSortBy.CREATED_AT),
-    sortOrder: parseAsString.withDefault('desc'),
-    isHot: parseAsBoolean.withDefault(false),
-    hasDiscount: parseAsBoolean.withDefault(false),
-  });
+export default function TourList({
+  tours,
+  status,
+  hasNextPage,
+  isFetchingNextPage,
+  fetchNextPage,
+}: Props) {
   const loadMoreRef = useRef<HTMLDivElement>(null);
-
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } = useInfiniteQuery({
-    queryKey: ['tours', searchTerm, sortBy, sortOrder, isHot, hasDiscount],
-    queryFn: ({ pageParam = 1 }) =>
-      tourApi.getTours({
-        page: pageParam,
-        search: searchTerm,
-        sortBy: sortBy as TourSortBy,
-        sortOrder,
-        isHot,
-        hasDiscount,
-      }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.currentPage + 1 : undefined),
-    staleTime: 60000, // Cache data for 1 minute
-    refetchOnWindowFocus: false, // Prevent refetching when window regains focus
-  });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -76,8 +61,6 @@ export default function TourList() {
     return () => observer.disconnect();
   }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
 
-  const tours = data?.pages.flatMap((page) => page.tours) || [];
-
   if (status === 'pending') {
     return <TourListSkeleton />;
   }
@@ -87,7 +70,9 @@ export default function TourList() {
   }
 
   if (tours.length === 0) {
-    return <div className="text-center py-10">Không có tour phù hợp.</div>;
+    return (
+      <div className="py-10 text-foreground-secondary text-center">Không có tour phù hợp.</div>
+    );
   }
 
   return (
@@ -110,10 +95,8 @@ export default function TourList() {
 }
 
 function TourCard({ tour }: { tour: Tour }) {
-  const originalPrice = tour.price;
-  const discountedPrice = tour.discountPercentage
-    ? tour.price * (1 - tour.discountPercentage / 100)
-    : null;
+  const price = tour.price;
+  const originalPrice = tour.originalPrice;
 
   return (
     <Link href={`/tours/${tour.slug}`} className="block group">
@@ -148,7 +131,7 @@ function TourCard({ tour }: { tour: Tour }) {
                 className="inline-block px-3 py-1 border border-foreground rounded-full font-medium group-hover:bg-foreground group-hover:text-white transition-colors"
                 whileHover={{ scale: 1.05 }}
               >
-                {formatCurrency(discountedPrice || originalPrice)} VNĐ
+                {formatCurrency(price || originalPrice)} VNĐ
               </motion.span>
 
               {tour.discountPercentage ? (
