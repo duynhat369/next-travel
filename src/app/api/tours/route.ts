@@ -6,12 +6,28 @@ import { NextRequest, NextResponse } from 'next/server';
 const tourSchema = new mongoose.Schema<Tour>(
   {
     title: { type: String, required: true },
+    slug: {
+      type: String,
+      unique: true,
+      required: true,
+      lowercase: true,
+    },
     description: { type: String, required: true },
     price: { type: Number, required: true },
     originalPrice: { type: Number, required: true },
     discountPercentage: { type: Number, required: true },
     thumbnail: { type: String, required: true },
     isHot: { type: Boolean, default: false },
+    itinerary: { type: String },
+    whatToBring: { type: [String] },
+    guides: [
+      {
+        name: String,
+        avatar: String,
+        bio: String,
+      },
+    ],
+    gallery: { type: [String] },
   },
   { timestamps: true }
 );
@@ -58,6 +74,7 @@ export async function GET(request: NextRequest) {
     const sort: any = {};
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
+      sort['_id'] = sortOrder === 'asc' ? 1 : -1;
     }
 
     // Count total tours matching the filter

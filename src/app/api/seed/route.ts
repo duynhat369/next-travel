@@ -1,62 +1,219 @@
-// import { connectToDatabase } from '@/lib/db/mongodb';
-// import { NextResponse } from 'next/server';
-// import { getTourModel } from '../tours/route'; // Import từ file tours route
+import { connectToDatabase } from '@/lib/db/mongodb';
+import { NextResponse } from 'next/server';
+import { getTourModel } from '../tours/route'; // Import từ file tours route
 
-// export async function GET() {
-//   try {
-//     await connectToDatabase();
-//     const Tour = getTourModel();
+export async function GET() {
+  try {
+    await connectToDatabase();
+    const Tour = getTourModel();
 
-//     // Xóa dữ liệu cũ nếu cần
-//     // await Tour.deleteMany({});
+    // await Tour.updateMany(
+    //   {}, // tất cả documents
+    //   {
+    //     $set: {
+    //       itinerary: 'Lịch trình sẽ được cập nhật sớm.',
+    //       whatToBring: [
+    //         'Giấy tờ tùy thân',
+    //         'Đồ dùng cá nhân',
+    //         'Đồ ăn nhẹ',
+    //         'Nước uống',
+    //         'Kem chống nắng',
+    //         'Mũ nón',
+    //         'Kính mát',
+    //       ],
+    //       guides: [
+    //         {
+    //           name: 'Nguyễn Văn A',
+    //           avatar:
+    //             'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+    //           bio: 'Hướng dẫn viên du lịch với 5 năm kinh nghiệm, yêu thích khám phá và chia sẻ văn hóa địa phương.',
+    //         },
+    //         {
+    //           name: 'Trần Thị B',
+    //           avatar:
+    //             'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+    //           bio: 'Hướng dẫn viên du lịch với 3 năm kinh nghiệm, chuyên về các tour khám phá thiên nhiên.',
+    //         },
+    //         {
+    //           name: 'Nguyễn Thị C',
+    //           avatar:
+    //             'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+    //           bio: 'Hướng dẫn viên du lịch với 4 năm kinh nghiệm, đam mê khám phá văn hóa và ẩm thực địa phương.',
+    //         },
+    //       ],
+    //       gallery: [
+    //         'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+    //         'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/family-in-forest-1600x900.jpg',
+    //         'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+    //         'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/family-in-forest-1600x900.jpg',
+    //         'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+    //       ],
+    //     },
+    //   }
+    // );
 
-//     // Thêm dữ liệu mẫu
-//     const sampleTours = [
-//       {
-//         title: 'An Giang - Châu Đốc',
-//         description:
-//           'Với LATATA không lo về giá, với đội ngũ dẫn đoàn nhiệt huyết, đầy dẫn kinh nghiệm, và đội ngũ vô cùng đồng đào chúng tôi tin rằng sẽ mang lại cho bạn những trải nghiệm tuyệt vời nhất những khoảng khắc đáng nhớ, thú vị. Hơn thế nữa chúng tôi đảm bảo chuyến đi của bạn luôn an toàn, bảo tồn văn hoá du lịch',
-//         price: 2160000,
-//         originalPrice: 2400000,
-//         discountPercentage: 10,
-//         thumbnail:
-//           'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
-//         isHot: false,
-//       },
-//       {
-//         title: 'Mùa Hạ Buôn Ma Thuột',
-//         description:
-//           'Khám phá Buôn Ma Thuột vào mùa hạ là tour trải nghiệm dài ngày đặc biệt của Latata, ở đây bạn được "lên rừng xuống suối" được thưởng thức vẻ đẹp hoang sơ hùng vĩ của đại ngàn Tây Nguyên, được thưởng thức những ly cà phê thơm ngon đậm vị nhất trong đời mình. Được cưỡi Voi được tắm thác và hơn thế nữa',
-//         price: 900000,
-//         originalPrice: 900000,
-//         discountPercentage: 0,
-//         thumbnail:
-//           'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
-//         isHot: true,
-//       },
-//       {
-//         title: 'Tour Xuyên Việt bằng xe máy',
-//         description:
-//           'Tour xuyên việt bằng xe máy là một hành trình dài và đầy thử thách, đưa bạn từ miền Bắc đến miền Nam của Việt Nam. Bạn sẽ được trải nghiệm những cảnh đẹp tuyệt vời, từ những dãy núi hùng vĩ đến những bãi biển tuyệt đẹp.',
-//         price: 10800000,
-//         originalPrice: 12000000,
-//         discountPercentage: 10,
-//         thumbnail:
-//           'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
-//       },
-//     ];
+    // Thêm dữ liệu mẫu
+    const sampleTours = [
+      {
+        title: 'Tour từ thiện tại Cao Bằng',
+        slug: 'tour-tu-thien-tai-cao-bang',
+        description:
+          'Tour từ thiện tại Cao Bằng là một hành trình đầy ý nghĩa, nơi bạn có thể khám phá vẻ đẹp thiên nhiên hùng vĩ của vùng núi phía Bắc Việt Nam và đồng thời tham gia vào các hoạt động từ thiện giúp đỡ cộng đồng địa phương.',
+        price: 2160000,
+        originalPrice: 2400000,
+        discountPercentage: 10,
+        thumbnail:
+          'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+        isHot: false,
+        itinerary: 'Lịch trình sẽ được cập nhật sớm.',
+        whatToBring: [
+          'Giấy tờ tùy thân',
+          'Đồ dùng cá nhân',
+          'Đồ ăn nhẹ',
+          'Nước uống',
+          'Kem chống nắng',
+          'Mũ nón',
+          'Kính mát',
+        ],
+        guides: [
+          {
+            name: 'Nguyễn Văn A',
+            avatar:
+              'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+            bio: 'Hướng dẫn viên du lịch với 5 năm kinh nghiệm, yêu thích khám phá và chia sẻ văn hóa địa phương.',
+          },
+          {
+            name: 'Trần Thị B',
+            avatar:
+              'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+            bio: 'Hướng dẫn viên du lịch với 3 năm kinh nghiệm, chuyên về các tour khám phá thiên nhiên.',
+          },
+          {
+            name: 'Nguyễn Thị C',
+            avatar:
+              'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+            bio: 'Hướng dẫn viên du lịch với 4 năm kinh nghiệm, đam mê khám phá văn hóa và ẩm thực địa phương.',
+          },
+        ],
+        gallery: [
+          'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/family-in-forest-1600x900.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/family-in-forest-1600x900.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+        ],
+      },
+      {
+        title: 'Tour khám phá Vịnh Vĩnh Hy',
+        slug: 'tour-kham-pha-vinh-vinh-hy',
+        description:
+          'Tour khám phá Vịnh Vĩnh Hy là một hành trình tuyệt vời để bạn trải nghiệm vẻ đẹp hoang sơ của biển cả và thiên nhiên. Bạn sẽ được tham gia vào các hoạt động như lặn biển, câu cá, và thưởng thức hải sản tươi ngon.',
+        price: 900000,
+        originalPrice: 900000,
+        discountPercentage: 0,
+        thumbnail:
+          'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+        isHot: true,
+        itinerary: 'Lịch trình sẽ được cập nhật sớm.',
+        whatToBring: [
+          'Giấy tờ tùy thân',
+          'Đồ dùng cá nhân',
+          'Đồ ăn nhẹ',
+          'Nước uống',
+          'Kem chống nắng',
+          'Mũ nón',
+          'Kính mát',
+        ],
+        guides: [
+          {
+            name: 'Nguyễn Văn A',
+            avatar:
+              'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+            bio: 'Hướng dẫn viên du lịch với 5 năm kinh nghiệm, yêu thích khám phá và chia sẻ văn hóa địa phương.',
+          },
+          {
+            name: 'Trần Thị B',
+            avatar:
+              'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+            bio: 'Hướng dẫn viên du lịch với 3 năm kinh nghiệm, chuyên về các tour khám phá thiên nhiên.',
+          },
+          {
+            name: 'Nguyễn Thị C',
+            avatar:
+              'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+            bio: 'Hướng dẫn viên du lịch với 4 năm kinh nghiệm, đam mê khám phá văn hóa và ẩm thực địa phương.',
+          },
+        ],
+        gallery: [
+          'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/family-in-forest-1600x900.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/family-in-forest-1600x900.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+        ],
+      },
+      {
+        title: 'Lặn cùng rùa biênh tại Nha Trang',
+        slug: 'lan-cung-rua-bienh-tai-nha-trang',
+        description:
+          'Tour lặn cùng rùa biển tại Nha Trang là một trải nghiệm độc đáo, nơi bạn có thể khám phá thế giới dưới nước và gặp gỡ những chú rùa biển đáng yêu. Bạn sẽ được trang bị đầy đủ thiết bị lặn và hướng dẫn viên chuyên nghiệp.',
+        price: 10800000,
+        originalPrice: 12000000,
+        discountPercentage: 10,
+        thumbnail:
+          'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+        isHot: true,
+        itinerary: 'Lịch trình sẽ được cập nhật sớm.',
+        whatToBring: [
+          'Giấy tờ tùy thân',
+          'Đồ dùng cá nhân',
+          'Đồ ăn nhẹ',
+          'Nước uống',
+          'Kem chống nắng',
+          'Mũ nón',
+          'Kính mát',
+        ],
+        guides: [
+          {
+            name: 'Nguyễn Văn A',
+            avatar:
+              'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+            bio: 'Hướng dẫn viên du lịch với 5 năm kinh nghiệm, yêu thích khám phá và chia sẻ văn hóa địa phương.',
+          },
+          {
+            name: 'Trần Thị B',
+            avatar:
+              'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+            bio: 'Hướng dẫn viên du lịch với 3 năm kinh nghiệm, chuyên về các tour khám phá thiên nhiên.',
+          },
+          {
+            name: 'Nguyễn Thị C',
+            avatar:
+              'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+            bio: 'Hướng dẫn viên du lịch với 4 năm kinh nghiệm, đam mê khám phá văn hóa và ẩm thực địa phương.',
+          },
+        ],
+        gallery: [
+          'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/preserving-planet_1600x900.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/family-in-forest-1600x900.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/global/our-purpose/images/family-in-forest-1600x900.jpg',
+          'https://pk.visamiddleeast.com/content/dam/VCOM/regional/cemea/generic-cemea/travel-with-visa/images/deserted-beach-travel-800x450.jpg',
+        ],
+      },
+    ];
 
-//     await Tour.insertMany(sampleTours);
+    await Tour.insertMany(sampleTours);
 
-//     return NextResponse.json({
-//       success: true,
-//       message: 'Dữ liệu mẫu đã được thêm thành công',
-//     });
-//   } catch (error) {
-//     console.error('Error seeding database:', error);
-//     return NextResponse.json(
-//       { success: false, error: 'Đã xảy ra lỗi khi thêm dữ liệu mẫu' },
-//       { status: 500 }
-//     );
-//   }
-// }
+    return NextResponse.json({
+      success: true,
+      message: 'Dữ liệu mẫu đã được thêm thành công',
+    });
+  } catch (error) {
+    console.error('Error seeding database:', error);
+    return NextResponse.json(
+      { success: false, error: 'Đã xảy ra lỗi khi thêm dữ liệu mẫu' },
+      { status: 500 }
+    );
+  }
+}

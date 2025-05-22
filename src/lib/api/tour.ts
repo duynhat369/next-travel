@@ -8,6 +8,10 @@ export interface ToursResponse {
   currentPage: number;
   totalPages: number;
 }
+export interface TourResponse {
+  tour: Tour;
+  success: boolean;
+}
 export interface TourFilterParams {
   page?: number;
   limit?: number;
@@ -40,5 +44,8 @@ export const tourApi = {
         ...(hasDiscount !== undefined && { hasDiscount }),
       },
     });
+  },
+  getTourBySlug: async (slug: string): Promise<TourResponse> => {
+    return axiosClient.get(`/tours/${slug}`);
   },
 };
