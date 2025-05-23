@@ -20,17 +20,20 @@ import { TOURS_PAGE } from '@/constants';
 import { tourApi } from '@/lib/api/tour';
 import { BookingFormValues, bookingSchema } from '@/lib/schemas/tour';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { CheckCircle } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { notFound, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { BookingForm } from './components/BookingForm';
 import TourInfo from './components/TourInfo';
 
 export default function TourDetailPage() {
   const params = useParams();
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const { data: session } = useSession();
 
   const { slug } = params;
 
@@ -63,14 +66,35 @@ export default function TourDetailPage() {
   });
   const { tour } = tourResponse || {};
 
-  const handleSubmit = async (data: BookingFormValues) => {
-    try {
-      // Chạy API bookingRequest
-      // const response = await bookingRequest(data);
-
-      // if (response.success) {
+  const { mutate: createBooking } = useMutation({
+    mutationFn: tourApi.createBooking,
+    onSuccess: (data, variables) => {
       setShowConfirmation(true);
-      // }
+      // reset();
+    },
+    onError: (error: unknown) => {
+      toast('Yêu cầu không thành công', {
+        description: 'Có lỗi xảy ra',
+      });
+    },
+  });
+
+  const handleSubmit = async (data: BookingFormValues) => {
+    if (!session?.user?.id) {
+      toast('Yêu cầu không thành công', {
+        description: 'Vui lòng đăng nhập để đặt tour',
+      });
+      return;
+    }
+    try {
+      createBooking({
+        tourId: tour?._id,
+        userId: session?.user.id,
+        tourStartDate: data.date.from,
+        tourEndDate: data.date.to,
+        numberOfParticipants: data.quantity,
+        phoneNumber: data.phoneNumber,
+      });
     } catch (error) {
       // Xử lý lỗi
       console.error('Booking error:', error);
@@ -84,31 +108,6 @@ export default function TourDetailPage() {
       </div>
     );
   }
-
-  // if (bookingComplete) {
-  //   return (
-  //     <motion.div
-  //       initial={{ opacity: 0, y: 20 }}
-  //       animate={{ opacity: 1, y: 0 }}
-  //       transition={{ duration: 0.5 }}
-  //       className="max-w-4xl mx-auto p-6"
-  //     >
-  //       <Alert className="bg-green-50 border-green-200">
-  //         <Check className="h-5 w-5 text-green-600" />
-  //         <AlertTitle className="text-green-800 text-lg font-medium">Đặt tour thành công!</AlertTitle>
-  //         <AlertDescription className="text-green-700">
-  //           Cảm ơn bạn đã đặt tour {tour.name}. Chúng tôi sẽ liên hệ với bạn sớm để xác nhận chi tiết.
-  //         </AlertDescription>
-  //       </Alert>
-  //       <Button
-  //         className="mt-4 bg-blue-600 hover:bg-blue-700 text-white"
-  //         // onClick={() => router.push("/tours")}
-  //       >
-  //         Xem các tour khác
-  //       </Button>
-  //     </motion.div>
-  //   );
-  // }
 
   return (
     <div className="container mx-auto px-4 py-8 mt-28">
@@ -124,12 +123,12 @@ export default function TourDetailPage() {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="">
-        <h1 className="text-4xl md:text-5xl text-secondary font-bold text-center mb-8">
+        <h1 className="mb-8 text-4xl md:text-5xl text-secondary font-bold text-center">
           {tour?.title}
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="col-span-1 md:sticky md:top-28 md:self-start">
+        <div className="grid grid-cols-1 md:grid-cols-3 md:gap-8 gap-y-8">
+          <div className="col-span-1 md:sticky md:top-28">
             <BookingForm
               tour={tour}
               bookingRegister={bookingRegister}
@@ -151,9 +150,9 @@ export default function TourDetailPage() {
             <AlertDialogTitle className="text-xl font-semibold text-gray-900">
               Yêu cầu đã được ghi nhận
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600 mt-2">
-              Chúng tôi đã ghi nhận thông tin thanh toán của bạn, tư vấn viên sẽ liên hệ với bạn sớm
-              nhất.
+            <AlertDialogDescription className="text-foreground mt-2">
+              Tư vấn viên sẽ liên hệ với bạn sớm nhất. Hãy kiểm tra lịch sử đặt tour trong trang cá
+              nhân.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

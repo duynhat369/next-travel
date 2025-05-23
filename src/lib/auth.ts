@@ -59,7 +59,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user, account, profile }) {
       if (user) {
-        token.id = user.id;
+        token.id = (user as any)._id?.toString() || user.id;
         token.username = user.username;
         token.displayName = user.displayName;
         token.avatar = user.avatar;
@@ -89,8 +89,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               existingUser.lastLogin = new Date();
               await existingUser.save();
             }
+            user.id = existingUser._id.toString();
           } else {
-            await User.create({
+            const newUser = await User.create({
               username: user.username || user.email?.split('@')[0],
               displayName: user.name || profile?.name || 'User',
               email: user.email,
@@ -99,6 +100,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               provider: 'google',
               googleId: user.id,
             });
+            user.id = newUser._id.toString();
           }
         } catch (error) {
           console.error('Google Sign In Error:', error);

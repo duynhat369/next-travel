@@ -34,7 +34,7 @@ const menuItems: MenuItem[] = [
 
 export const Header = () => {
   const pathname = usePathname();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   return (
     <header className="fixed top-0 right-0 left-0 z-50 px-4 pt-4 sm:pt-6">

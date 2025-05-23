@@ -14,11 +14,10 @@ export default function TourInfo({ tour }: Props) {
       transition={{ duration: 0.5, delay: 0.2 }}
       className="col-span-2 space-y-8"
     >
+      <Gallery tour={tour} />
       <p className="text-lg text-foreground leading-relaxed">
         {tour?.description || 'Không có thông tin mô tả cho chuyến đi này.'}
       </p>
-
-      <Gallery tour={tour} />
       <TourGuide tour={tour} />
 
       <div className="space-y-4">

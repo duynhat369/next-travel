@@ -26,7 +26,7 @@ export default function Gallery({ tour }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-start gap-4">
         <h3 className="text-2xl font-semibold tracking-tight">Hình ảnh Tour</h3>
         <Badge variant="outline" className="px-3">
           {tour?.gallery?.length || 0} ảnh

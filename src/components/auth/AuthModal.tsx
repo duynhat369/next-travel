@@ -23,7 +23,6 @@ import {
   RegisterFormValues,
   registerSchema,
 } from '@/lib/schemas/auth';
-import { useAuthStore } from '@/store/auth';
 import { LogIn, UserPlus } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { toast } from 'sonner';
@@ -34,7 +33,6 @@ import { RegisterForm } from './components/RegisterForm';
 export function AuthModal() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const setUser = useAuthStore((state) => state.setUser);
 
   const {
     register: registerLogin,
@@ -79,9 +77,6 @@ export function AuthModal() {
       if (!res?.ok) {
         throw new Error(res.error || 'Error logging in after registration');
       }
-
-      // Set user in Zustand store
-      setUser(data.user);
       // Close the modal
       setOpen(false);
       reset();
@@ -119,9 +114,6 @@ export function AuthModal() {
             if (!res?.ok) {
               throw new Error(res.error || 'Error logging in after registration');
             }
-
-            // Set user in Zustand store
-            setUser(data.user);
           },
         },
       });

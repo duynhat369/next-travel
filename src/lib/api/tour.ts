@@ -20,6 +20,18 @@ export interface TourFilterParams {
   isHot?: boolean;
   hasDiscount?: boolean;
 }
+export interface BookingValues {
+  tourId?: string;
+  userId?: string;
+  numberOfParticipants?: number;
+  phoneNumber?: string;
+  tourStartDate?: Date;
+  tourEndDate?: Date;
+}
+export interface BookingResponse {
+  data: any;
+  success: boolean;
+}
 
 export const tourApi = {
   getTours: async (params: TourFilterParams = {}): Promise<ToursResponse> => {
@@ -47,5 +59,8 @@ export const tourApi = {
   },
   getTourBySlug: async (slug: string): Promise<TourResponse> => {
     return axiosClient.get(`/tours/${slug}`);
+  },
+  createBooking: async (bookingData: BookingValues): Promise<BookingResponse> => {
+    return axiosClient.post('/bookings', bookingData);
   },
 };

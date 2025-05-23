@@ -14,7 +14,7 @@ export const registerSchema = z
       .min(2, 'Tên hiển thị phải có ít nhất 2 ký tự')
       .max(30, 'Tên đăng nhập không được quá 30 ký tự')
       .nonempty('Tên hiển thị là bắt buộc'),
-    email: z.union([z.literal(''), z.string().email('Email không hợp lệ')]),
+    email: z.string().email('Email không hợp lệ'),
     phoneNumber: z.string().optional(),
     password: z
       .string()
