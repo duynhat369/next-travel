@@ -2,6 +2,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
+    formats: ['image/webp', 'image/avif'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -11,6 +12,11 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'pk.visamiddleeast.com',
+        port: '',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ik.imagekit.io',
         port: '',
       },
     ],

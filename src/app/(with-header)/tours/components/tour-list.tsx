@@ -159,7 +159,7 @@ function TourCard({ tour }: { tour: Tour }) {
           transition={{ duration: 0.3 }}
         >
           <Image
-            src={tour.thumbnail || '/placeholder.svg'}
+            src={tour.thumbnail || '/placeholder.png'}
             alt={tour.title}
             fill
             className="object-cover"
