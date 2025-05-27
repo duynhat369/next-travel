@@ -19,15 +19,12 @@ export const SummarySection = () => {
               {/* Main Image */}
               <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-white p-3">
                 <Image
-                  src="/images/about-us-2.png"
+                  src="https://ik.imagekit.io/driwue7iu/about-us.webp?updatedAt=1748325784101"
                   alt="Về chúng tôi img"
                   width={500}
                   height={400}
                   className="w-full h-auto object-cover rounded-xl"
                 />
-
-                {/* Image Overlay */}
-                <div className="absolute inset-3 bg-gradient-to-t from-black/20 to-transparent rounded-xl" />
               </div>
 
               {/* Decorative Elements */}

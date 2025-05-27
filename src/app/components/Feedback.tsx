@@ -21,7 +21,7 @@ const USERS: User[] = [
     id: 1,
     role: 'Dẫn tour',
     username: 'Trần Mỹ Lệ',
-    avatar: '/images/hero-image-1.png',
+    avatar: 'https://ik.imagekit.io/driwue7iu/tour-thumb.webp?updatedAt=1748326335537',
     description:
       'Bạn hoàn toàn có thể chill trong xuyên suốt hành trình khám phá cùng LATATA. Ở đây chúng tôi cung cấp dịch vụ trọn gói ăn uống chỗ ngồi',
   },
@@ -29,7 +29,7 @@ const USERS: User[] = [
     id: 2,
     role: 'Khách hàng',
     username: 'Anh Hai Lúa',
-    avatar: '/images/hero-image-3.png',
+    avatar: 'https://ik.imagekit.io/driwue7iu/tour-guide.webp?updatedAt=1748324193902',
     description:
       'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam, Bạn hoàn toàn có thể chill trong xuyên suốt hành trình khám phá cùng LATATA. Ở đây chúng tôi cung cấp dịch vụ trọn gói ăn uống chỗ ngồi',
   },
@@ -37,7 +37,7 @@ const USERS: User[] = [
     id: 3,
     role: 'Khách hàng',
     username: 'Nguyễn Duy Nhật',
-    avatar: '/images/hero-image-1.png',
+    avatar: 'https://ik.imagekit.io/driwue7iu/banner-about-us.webp?updatedAt=1748325348486',
     description:
       'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
   },
@@ -45,7 +45,7 @@ const USERS: User[] = [
     id: 4,
     role: 'Dẫn tour',
     username: 'MR Quang Vũ',
-    avatar: '/images/hero-image-4.png',
+    avatar: 'https://ik.imagekit.io/driwue7iu/avt.webp?updatedAt=1748325940573',
     description:
       'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
   },
@@ -53,7 +53,7 @@ const USERS: User[] = [
     id: 5,
     role: 'Khách hàng',
     username: 'Chị Bảy',
-    avatar: '/images/hero-image-1.png',
+    avatar: 'https://ik.imagekit.io/driwue7iu/tour-guide.webp?updatedAt=1748324193902',
     description:
       'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
   },
@@ -61,7 +61,7 @@ const USERS: User[] = [
     id: 6,
     role: 'Khách hàng',
     username: 'Chị Thảo Anh',
-    avatar: '/images/hero-image-2.png',
+    avatar: 'https://ik.imagekit.io/driwue7iu/banner-about-us.webp?updatedAt=1748325348486',
     description:
       'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
   },
@@ -69,7 +69,7 @@ const USERS: User[] = [
     id: 7,
     role: 'Khách hàng',
     username: 'Em Tuấn Hải Phòng',
-    avatar: '/images/hero-image-1.png',
+    avatar: 'https://ik.imagekit.io/driwue7iu/tour-thumb.webp?updatedAt=1748326335537',
     description:
       'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
   },
@@ -77,7 +77,7 @@ const USERS: User[] = [
     id: 8,
     role: 'Khách hàng',
     username: 'Anh Dương Đức',
-    avatar: '/images/hero-image-4.png',
+    avatar: 'https://ik.imagekit.io/driwue7iu/tour-thumb-2.webp?updatedAt=1748326535457',
     description:
       'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
   },
@@ -85,7 +85,7 @@ const USERS: User[] = [
     id: 9,
     role: 'Người dẫn tour',
     username: 'Phan Long Nhật',
-    avatar: '/images/hero-image-3.png',
+    avatar: 'https://ik.imagekit.io/driwue7iu/about-us.webp?updatedAt=1748325784101',
     description:
       'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
   },
@@ -93,7 +93,7 @@ const USERS: User[] = [
     id: 10,
     role: 'Khách hàng',
     username: 'Đặng Quỳnh Anh',
-    avatar: '/images/hero-image-2.png',
+    avatar: '/default-avatar.png',
     description:
       'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
   },
@@ -131,7 +131,7 @@ export const Feedback = () => {
         transition={{ duration: 0.7 }}
       >
         <motion.h2
-          className="text-4xl md:text-5xl font-bold text-foreground"
+          className="mb-4 text-4xl md:text-5xl font-bold text-foreground"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -139,7 +139,7 @@ export const Feedback = () => {
         >
           Khách hàng nói gì về LATATA
         </motion.h2>
-
+        <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-6" />
         <motion.p
           className="text-lg text-foreground-secondary mt-4 md:px-16"
           initial={{ opacity: 0 }}

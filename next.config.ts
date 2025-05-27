@@ -11,15 +11,16 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'pk.visamiddleeast.com',
+        hostname: 'ik.imagekit.io',
         port: '',
       },
       {
         protocol: 'https',
-        hostname: 'ik.imagekit.io',
+        hostname: 'www.trangcuanhat.com',
         port: '',
       },
     ],
+    unoptimized: false,
   },
 };
 

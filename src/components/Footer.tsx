@@ -5,13 +5,13 @@ export const Footer = () => {
   return (
     <footer
       className="relative bg-cover bg-center"
-      style={{ backgroundImage: "url('/images/footer-background-wave.png')" }}
+      style={{ backgroundImage: "url('/images/footer-background.png')" }}
     >
       <div className="container mx-auto px-4 py-12 text-white">
         <div className="flex flex-col gap-8 md:flex-row">
           <div className="flex-1">
             <div className="relative w-12 h-12 rounded-full overflow-hidden mb-2">
-              <Image src="/images/hero-image-1.png" alt="logo" fill className="w-12 h-12" />
+              <Image src="/placeholder.png" alt="logo" fill className="w-12 h-12" />
             </div>
             <div className="w-full flex flex-col items-start justify-center gap-4">
               <p className="">Hot line: 0815567712</p>

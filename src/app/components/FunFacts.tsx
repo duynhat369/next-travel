@@ -26,7 +26,7 @@ export const FunFacts = () => {
       <div className="container mx-auto px-4 text-center">
         <div className="mb-8 md:mb-16">
           <motion.h2
-            className="text-4xl md:text-5xl font-bold text-foreground"
+            className="mb-4 text-4xl md:text-5xl font-bold text-foreground"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -34,6 +34,7 @@ export const FunFacts = () => {
           >
             Những điều thú vị LATATA
           </motion.h2>
+          <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-6" />
           <motion.p
             className="text-lg text-foreground-secondary mt-4 md:px-16"
             initial={{ opacity: 0 }}

@@ -22,11 +22,11 @@ export const CTA = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-5xl font-bold leading-tight"
+          className="mb-4 text-4xl md:text-5xl font-bold leading-tight"
         >
           Sẵn sàng khám phá hành trình tuyệt vời tiếp theo?
         </motion.h2>
-
+        <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-6" />
         <motion.p
           initial={{ opacity: 0, y: -10 }}
           whileInView={{ opacity: 1, y: 0 }}

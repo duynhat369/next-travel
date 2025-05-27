@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 export const Mission = () => {
   return (
-    <section className="py-12 mt-20 md:mt-24 md:py-20 bg-secondary/20">
+    <section className="py-12 mt-20 md:mt-24 md:py-20 bg-gradient-to-b from-secondary/15 to-secondary/5">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

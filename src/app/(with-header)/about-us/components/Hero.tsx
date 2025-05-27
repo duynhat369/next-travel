@@ -12,7 +12,7 @@ export const Hero = () => {
         transition={{ duration: 0.8, ease: 'easeInOut' }}
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: `url('https://ik.imagekit.io/driwue7iu/about-us.webp?updatedAt=1748256042887')`,
+          backgroundImage: `url('https://ik.imagekit.io/driwue7iu/banner-about-us.webp?updatedAt=1748325348486)`,
         }}
       >
         {/* Multi-layer Gradient Overlay */}

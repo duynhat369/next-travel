@@ -35,7 +35,7 @@ export const Timeline = () => {
   return (
     <section className="container relative mx-auto my-20 md:my-24 px-8 md:px-16">
       <motion.h2
-        className="mb-8 md:mb-16 text-center text-4xl md:text-5xl font-bold text-foreground"
+        className="mb-4 text-center text-4xl md:text-5xl font-bold text-foreground"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -43,6 +43,7 @@ export const Timeline = () => {
       >
         Hỗ trợ cá nhân hoá chuyến đi
       </motion.h2>
+      <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-8 md:mb-16" />
       <div className="flex flex-col relative">
         {features.map((item, index) => {
           const isRight = index % 2 === 1;

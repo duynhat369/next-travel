@@ -38,7 +38,7 @@ export const Header = () => {
 
   return (
     <header className="fixed top-0 right-0 left-0 z-50 px-4 pt-4 sm:pt-6">
-      <div className="min-w-sm max-w-[1024px] mx-auto flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3 bg-white backdrop-blur-md rounded-full shadow-sm">
+      <div className="max-w-[1024px] mx-auto flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3 bg-white backdrop-blur-md rounded-full shadow-sm">
         {/* Logo */}
         <Link
           href="/"

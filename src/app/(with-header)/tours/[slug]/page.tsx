@@ -123,10 +123,10 @@ export default function TourDetailPage() {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="">
-        <h1 className="mb-8 text-4xl md:text-5xl text-secondary font-bold text-center">
+        <h1 className="mb-4 text-4xl md:text-5xl text-secondary font-bold text-center">
           {tour?.title}
         </h1>
-
+        <div className="w-28 h-1 bg-secondary mx-auto rounded-full mb-8" />
         <div className="grid grid-cols-1 md:grid-cols-3 md:gap-8 gap-y-8">
           <div className="col-span-1 md:sticky md:top-28">
             <BookingForm
@@ -145,9 +145,9 @@ export default function TourDetailPage() {
         <AlertDialogContent className="max-w-md bg-white">
           <AlertDialogHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-              <CheckCircle className="h-6 w-6 text-green-600" />
+              <CheckCircle className="h-6 w-6 text-secondary" />
             </div>
-            <AlertDialogTitle className="text-xl font-semibold text-gray-900">
+            <AlertDialogTitle className="text-xl font-semibold text-foreground">
               Yêu cầu đã được ghi nhận
             </AlertDialogTitle>
             <AlertDialogDescription className="text-foreground mt-2">
