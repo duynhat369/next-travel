@@ -39,7 +39,7 @@ const USERS: User[] = [
     username: 'Nguyễn Duy Nhật',
     avatar: 'https://ik.imagekit.io/driwue7iu/banner-about-us.webp?updatedAt=1748325348486',
     description:
-      'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
+      'Tôi đã có những trải nghiệm tuyệt vời với LATATA. Họ đã giúp tôi khám phá những địa điểm thú vị và cung cấp dịch vụ chuyên nghiệp.',
   },
   {
     id: 4,
@@ -47,7 +47,7 @@ const USERS: User[] = [
     username: 'MR Quang Vũ',
     avatar: 'https://ik.imagekit.io/driwue7iu/avt.webp?updatedAt=1748325940573',
     description:
-      'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
+      'Dẫn tour là một công việc thú vị và đầy thử thách. Tôi rất vui khi được chia sẻ những kiến thức và kinh nghiệm của mình với khách hàng.',
   },
   {
     id: 5,
@@ -55,7 +55,7 @@ const USERS: User[] = [
     username: 'Chị Bảy',
     avatar: 'https://ik.imagekit.io/driwue7iu/tour-guide.webp?updatedAt=1748324193902',
     description:
-      'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
+      'Đã đi tour với LATATA và tôi rất hài lòng với dịch vụ của họ. Họ đã giúp tôi có những trải nghiệm đáng nhớ và thú vị.',
   },
   {
     id: 6,
@@ -63,7 +63,7 @@ const USERS: User[] = [
     username: 'Chị Thảo Anh',
     avatar: 'https://ik.imagekit.io/driwue7iu/banner-about-us.webp?updatedAt=1748325348486',
     description:
-      'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
+      'Sự chuyên nghiệp và tận tâm của đội ngũ LATATA đã làm cho chuyến đi của tôi trở nên đặc biệt. Tôi sẽ giới thiệu họ cho bạn bè và gia đình.',
   },
   {
     id: 7,
@@ -71,7 +71,7 @@ const USERS: User[] = [
     username: 'Em Tuấn Hải Phòng',
     avatar: 'https://ik.imagekit.io/driwue7iu/tour-thumb.webp?updatedAt=1748326335537',
     description:
-      'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
+      'Không chỉ là một chuyến đi, mà là một hành trình khám phá văn hóa và con người. LATATA đã mang đến cho tôi những trải nghiệm tuyệt vời.',
   },
   {
     id: 8,
@@ -79,7 +79,7 @@ const USERS: User[] = [
     username: 'Anh Dương Đức',
     avatar: 'https://ik.imagekit.io/driwue7iu/tour-thumb-2.webp?updatedAt=1748326535457',
     description:
-      'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
+      'Tôi muốn cảm ơn LATATA vì đã mang đến cho tôi một chuyến đi tuyệt vời. Họ đã giúp tôi khám phá những địa điểm thú vị và cung cấp dịch vụ chuyên nghiệp.',
   },
   {
     id: 9,
@@ -87,7 +87,7 @@ const USERS: User[] = [
     username: 'Phan Long Nhật',
     avatar: 'https://ik.imagekit.io/driwue7iu/about-us.webp?updatedAt=1748325784101',
     description:
-      'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
+      'Khách hàng của tôi đã có những trải nghiệm tuyệt vời với LATATA. Họ đã giúp tôi khám phá những địa điểm thú vị và cung cấp dịch vụ chuyên nghiệp.',
   },
   {
     id: 10,
@@ -95,7 +95,7 @@ const USERS: User[] = [
     username: 'Đặng Quỳnh Anh',
     avatar: '/default-avatar.png',
     description:
-      'Ở đây chúng tôi đề cao sự gắn kết giữa các nhóm du lịch, văn hoá giao lưu và chia sẻ đam mê, nhằm phát triển bền vững nét đẹp người Việt Nam',
+      'Thật tuyệt vời khi được trải nghiệm dịch vụ của LATATA. Họ đã giúp tôi có những trải nghiệm đáng nhớ và thú vị trong chuyến đi của mình.',
   },
 ];
 

@@ -1,7 +1,5 @@
 'use client';
-import { Input } from '@/components/ui/input';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Search } from 'lucide-react';
 import { useState } from 'react';
 
 export const Hero = () => {
@@ -30,29 +28,36 @@ export const Hero = () => {
       </AnimatePresence>
 
       <div className="relative z-10 flex flex-col justify-center items-center h-full text-foreground text-center px-4">
-        <motion.h1
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="text-4xl md:text-5xl font-bold mb-4 mt-[-80px] leading-18"
-          style={{ textShadow: '0px 0 2px var(--muted)' }}
-        >
-          <span className="text-primary">LATALA</span> Việt Nam <br /> Bên Bạn Mọi Cung Đường
-        </motion.h1>
-
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="flex items-center w-full max-w-[800px] mb-16 py-2 px-4 bg-white rounded-full shadow-sm"
-        >
-          <Search size={24} className="text-primary" />
-          <Input
-            type="text"
-            placeholder="Bạn đang quan tâm điều gì?"
-            className="flex-1 border-none shadow-none placeholder:text-muted-foreground focus-visible:ring-0"
+        <h1 className="relative text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
+          <motion.span
+            className="block mb-2"
+            initial={{ x: -30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+          >
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/90 to-primary drop-shadow-2xl">
+              LATALA
+            </span>{' '}
+            <span className="text-white drop-shadow-2xl">Việt Nam</span>
+          </motion.span>
+          {/* Decorative Line */}
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+            className="w-32 h-1 bg-gradient-to-r from-primary to-primary/60 mx-auto mb-6 rounded-full"
           />
-        </motion.div>
+          <motion.span
+            className="block text-2xl md:text-3xl lg:text-4xl font-light tracking-wide"
+            initial={{ x: 30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+          >
+            <span className="text-xl md:text-2xl lg:text-3xl text-white/90 drop-shadow-lg font-light tracking-wide">
+              Bên Bạn Mọi Cung Đường
+            </span>
+          </motion.span>
+        </h1>
 
         <motion.div
           initial={{ opacity: 0 }}

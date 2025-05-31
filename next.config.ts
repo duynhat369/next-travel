@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
         hostname: 'www.trangcuanhat.com',
         port: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'pk.visamiddleeast.com',
+        port: '',
+      },
     ],
     unoptimized: false,
   },

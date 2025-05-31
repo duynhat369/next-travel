@@ -6,7 +6,7 @@ import TourHeader from './components/tour-header';
 import TourList from './components/tour-list';
 
 export default function ToursClient() {
-  const [{ search: searchTerm, sort, isHot, hasDiscount }, setQuery] = useQueryStates({
+  const [{ search: searchTerm, sort, isHot, hasDiscount }] = useQueryStates({
     search: parseAsString.withDefault(''),
     sort: parseAsString.withDefault('createdAt_desc'),
     isHot: parseAsBoolean.withDefault(false),
