@@ -20,6 +20,9 @@ export const productApi = {
       hasDiscount,
       freeShip,
       limited,
+      minPrice,
+      maxPrice,
+      category,
     } = queryParams;
 
     return axiosClient.get('/products', {
@@ -32,6 +35,9 @@ export const productApi = {
         ...(freeShip !== undefined && { freeShip }),
         ...(limited !== undefined && { limited }),
         ...(hasDiscount !== undefined && { hasDiscount }),
+        ...(minPrice !== undefined && { minPrice }),
+        ...(maxPrice !== undefined && { maxPrice }),
+        ...(category && { category }),
       },
     });
   },

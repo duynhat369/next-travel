@@ -15,6 +15,8 @@ const categories = [
   { id: 'all', label: 'Tất cả', value: null },
   { id: 'camping', label: 'Cắm trại', value: 'camping' },
   { id: 'souvenir', label: 'Đồ lưu niệm', value: 'souvenir' },
+  { id: 'motor', label: 'Đồ xe máy', value: 'motor' },
+  { id: 'clothing', label: 'Quần áo', value: 'clothing' },
 ];
 
 const priceRanges = [
@@ -155,14 +157,20 @@ export function ProductSidebar() {
 
   const activeFilterCount = getActiveFilterCount();
 
+  const services = [
+    { key: 'hasDiscount' as const, label: 'Có khuyến mãi', value: hasDiscount },
+    { key: 'freeShip' as const, label: 'Miễn phí vận chuyển', value: freeShip },
+    { key: 'limited' as const, label: 'Số lượng có hạn', value: limited },
+  ];
+
   // Filter content - reused in both desktop and mobile views
   const filterContent = (
     <div className="p-6 space-y-8">
       {/* Categories */}
       <div>
-        <div className="flex items-center space-x-2 mb-4">
-          <Tag className="w-4 h-4 text-gray-600" />
-          <h4 className="font-semibold text-gray-800">Danh mục sản phẩm</h4>
+        <div className="flex items-center space-x-2 mb-2">
+          <Tag className="w-4 h-4 text-foreground-secondary" />
+          <h4 className="font-semibold text-foreground">Danh mục sản phẩm</h4>
         </div>
 
         <div className="space-y-2">
@@ -173,10 +181,10 @@ export function ProductSidebar() {
               whileTap={{ scale: 0.98 }}
               onClick={() => handleCategoryChange(cat.value)}
               className={cn(
-                'w-full text-left px-4 py-3 rounded-lg border-2 transition-all duration-200',
+                'w-full text-left px-4 py-2 rounded-lg border-2 transition-all duration-200 cursor-pointer',
                 category === cat.value
                   ? 'border-primary bg-primary/5 text-primary font-medium'
-                  : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50'
+                  : 'border-gray-200 hover:border-gray-300 text-foreground hover:bg-gray-50'
               )}
             >
               <div className="flex items-center justify-between">
@@ -190,14 +198,17 @@ export function ProductSidebar() {
 
       {/* Price Range */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center space-x-2">
-            <DollarSign className="w-4 h-4 text-gray-600" />
-            <h4 className="font-semibold text-gray-800">Khoảng giá</h4>
+            <DollarSign className="w-4 h-4 text-foreground-secondary" />
+            <h4 className="font-semibold text-foreground">Khoảng giá</h4>
           </div>
           {(minPrice || maxPrice) && (
-            <button onClick={clearPriceFilter} className="text-gray-500 hover:text-gray-700">
-              <X className="w-4 h-4" />
+            <button
+              onClick={clearPriceFilter}
+              className="text-foreground-secondary hover:text-foreground"
+            >
+              <X className="w-4 h-4 cursor-pointer" />
             </button>
           )}
         </div>
@@ -216,10 +227,10 @@ export function ProductSidebar() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handlePriceRangeSelect(range)}
                 className={cn(
-                  'w-full text-left px-3 py-2 rounded-lg border transition-all duration-200 text-sm',
+                  'w-full text-left px-3 py-2 rounded-lg border transition-all duration-200 text-sm cursor-pointer',
                   isSelected
                     ? 'border-primary bg-primary/5 text-primary font-medium'
-                    : 'border-gray-200 hover:border-gray-300 text-gray-600 hover:bg-gray-50'
+                    : 'border-gray-200 hover:border-gray-300 text-foreground-secondary hover:bg-gray-50'
                 )}
               >
                 {range.label}
@@ -289,17 +300,13 @@ export function ProductSidebar() {
 
       {/* Services */}
       <div>
-        <div className="flex items-center space-x-2 mb-4">
-          <Gift className="w-4 h-4 text-gray-600" />
-          <h4 className="font-semibold text-gray-800">Dịch vụ</h4>
+        <div className="flex items-center space-x-2 mb-2">
+          <Gift className="w-4 h-4 text-foreground-secondary" />
+          <h4 className="font-semibold text-foreground">Dịch vụ</h4>
         </div>
 
         <div className="space-y-3">
-          {[
-            { key: 'hasDiscount' as const, label: 'Có khuyến mãi', value: hasDiscount },
-            { key: 'freeShip' as const, label: 'Miễn phí vận chuyển', value: freeShip },
-            { key: 'limited' as const, label: 'Số lượng có hạn', value: limited },
-          ].map((service) => (
+          {services.map((service) => (
             <motion.label
               key={service.key}
               whileHover={{ scale: 1.02 }}
@@ -328,7 +335,7 @@ export function ProductSidebar() {
                   'text-sm transition-colors',
                   service.value === 'true'
                     ? 'text-primary font-medium'
-                    : 'text-gray-700 group-hover:text-gray-900'
+                    : 'text-foreground-secondary group-hover:text-foreground'
                 )}
               >
                 {service.label}
@@ -343,9 +350,9 @@ export function ProductSidebar() {
   return (
     <>
       {/* Desktop Sidebar - Hidden on mobile */}
-      <div className="hidden md:block w-full max-w-sm bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+      <div className="hidden lg:block w-full max-w-sm bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary to-primary/80 text-white p-6">
+        <div className="bg-gradient-to-r from-primary to-primary/80 text-white px-6 py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Filter className="w-5 h-5" />
@@ -354,7 +361,7 @@ export function ProductSidebar() {
             {hasActiveFilters && (
               <button
                 onClick={clearAllFilters}
-                className="text-white/80 hover:text-white text-sm underline transition-colors cursor-pointer"
+                className="text-white hover:text-white text-sm underline transition-colors cursor-pointer"
               >
                 Mặc định
               </button>
@@ -366,14 +373,14 @@ export function ProductSidebar() {
       </div>
 
       {/* Mobile Filter Toggle Button */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <button
           onClick={() => setIsDrawerOpen(true)}
-          className="filter-toggle-btn fixed bottom-6 right-6 z-40 bg-primary text-white rounded-full p-4 shadow-lg flex items-center justify-center"
+          className="filter-toggle-btn fixed bottom-6 right-6 z-40 bg-secondary text-white rounded-full p-4 shadow-lg flex items-center justify-center cursor-pointer"
         >
           <Filter className="w-5 h-5" />
           {activeFilterCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold">
+            <span className="absolute -top-2 -right-2 bg-primary text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold">
               {activeFilterCount}
             </span>
           )}
@@ -389,7 +396,7 @@ export function ProductSidebar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 z-40 md:hidden"
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
               onClick={() => setIsDrawerOpen(false)}
             />
 
@@ -399,10 +406,10 @@ export function ProductSidebar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25 }}
-              className="filter-drawer fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-xl z-50 md:hidden flex flex-col"
+              className="filter-drawer fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-xl z-50 lg:hidden flex flex-col"
             >
               {/* Drawer Header */}
-              <div className="bg-gradient-to-r from-primary to-primary/80 text-white p-4 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-primary to-primary/80 text-white px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Filter className="w-5 h-5" />
                   <h3 className="text-lg font-semibold">Bộ lọc sản phẩm</h3>
@@ -423,13 +430,13 @@ export function ProductSidebar() {
                       clearAllFilters();
                       setIsDrawerOpen(false);
                     }}
-                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition-colors"
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-foreground font-medium hover:bg-gray-100 transition-colors cursor-pointer"
                   >
                     Xóa tất cả
                   </button>
                   <button
                     onClick={() => setIsDrawerOpen(false)}
-                    className="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                    className="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors cursor-pointer"
                   >
                     Áp dụng
                   </button>

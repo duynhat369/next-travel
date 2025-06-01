@@ -15,7 +15,7 @@ import { useQueryState } from 'nuqs';
 import { useEffect, useState } from 'react';
 
 interface Props {
-  lengthResult: number;
+  lengthResult?: number;
   isLoading?: boolean;
 }
 

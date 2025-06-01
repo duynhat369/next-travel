@@ -31,10 +31,11 @@ export default function ToursClient() {
     });
 
   const tours = data?.pages.flatMap((page) => page.tours) || [];
+  const total = data?.pages[0].total;
 
   return (
     <main className="container mx-auto px-4 py-8 mt-28">
-      <TourHeader lengthResult={tours.length} isLoading={isLoading} />
+      <TourHeader lengthResult={total} isLoading={isLoading} />
       <TourList
         tours={tours}
         status={status}

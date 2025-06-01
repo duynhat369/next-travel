@@ -17,7 +17,7 @@ interface FilterBadge {
 }
 
 interface Props {
-  lengthResult: number;
+  lengthResult?: number;
   isLoading: boolean;
 }
 

@@ -3,6 +3,7 @@ import { productApi } from '@/lib/api/product';
 import { ProductFilters } from '@/types/product.types';
 import { useQuery } from '@tanstack/react-query';
 import { parseAsBoolean, parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
+import { useMemo } from 'react';
 import { ProductHeader } from './components/product-header';
 import { ProductPlaceholder } from './components/product-placeholder';
 import ProductSearch from './components/product-search';
@@ -23,46 +24,57 @@ export default function ProductsClient() {
   });
 
   // Chuyển đổi filters từ nuqs sang ProductFilters
-  const queryFilters: ProductFilters = {
-    page: filters.page,
-    limit: 12,
-    search: filters.search || undefined,
-    sort: filters.sort || undefined,
-    category: filters.category || undefined,
-    minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
-    maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
-    hasDiscount: filters.hasDiscount || undefined,
-    freeShip: filters.freeShip || undefined,
-    inStock: filters.inStock || undefined,
-    limited: filters.limited || undefined,
-  };
+  const queryFilters: ProductFilters = useMemo(
+    () => ({
+      page: filters.page,
+      limit: 12,
+      search: filters.search || undefined,
+      sort: filters.sort || undefined,
+      category: filters.category || undefined,
+      minPrice: filters.minPrice ? Number(filters.minPrice) : undefined,
+      maxPrice: filters.maxPrice ? Number(filters.maxPrice) : undefined,
+      hasDiscount: filters.hasDiscount || undefined,
+      freeShip: filters.freeShip || undefined,
+      inStock: filters.inStock || undefined,
+      limited: filters.limited || undefined,
+    }),
+    [filters]
+  );
 
-  const { data, refetch, isLoading } = useQuery({
-    queryKey: ['products-pagination', queryFilters],
+  const { data, isLoading } = useQuery({
+    queryKey: ['products-paginated', queryFilters],
     queryFn: () => productApi.getProducts(queryFilters),
+    staleTime: 5 * 60 * 1000, // Cache 5 phút
   });
 
   const products = data?.products || [];
   const pagination = data?.pagination;
 
+  const handlePageChange = (page: number) => {
+    setFilters({ page });
+  };
+
   return (
     <main className="container mx-auto px-4 py-8 mt-28">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <div className="lg:w-1/4">
-            <div className="lg:sticky lg:top-8">
-              <ProductSidebar />
-            </div>
+      <div className="flex flex-col lg:flex-row lg:gap-8">
+        {/* Sidebar */}
+        <div className="lg:w-1/4">
+          <div className="lg:sticky lg:top-8">
+            <ProductSidebar />
           </div>
+        </div>
 
-          {/* Main Content - Placeholder */}
-          <div className="lg:w-3/4">
-            <div className="rounded-2xl shadow-lg border border-gray-100 p-6">
-              <ProductSearch lengthResult={products.length} isLoading={isLoading} />
-              <ProductHeader lengthResult={products.length} isLoading={isLoading} />
-              <ProductPlaceholder products={products} />
-            </div>
+        {/* Main Content - Placeholder */}
+        <div className="lg:w-3/4">
+          <div className="rounded-2xl shadow-lg border border-gray-100 p-6">
+            <ProductSearch />
+            <ProductHeader lengthResult={pagination?.total} isLoading={isLoading} />
+            <ProductPlaceholder
+              products={products}
+              pagination={pagination}
+              isLoading={isLoading}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
       </div>

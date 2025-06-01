@@ -22,7 +22,7 @@ export const ProductItem = ({ product, index, onQuickview }: Props) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className={`group bg-gray-50 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-200 ${
+      className={`group bg-gray-50 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-200 flex flex-col h-full ${
         isOutOfStock ? 'opacity-75' : ''
       }`}
     >
@@ -63,7 +63,7 @@ export const ProductItem = ({ product, index, onQuickview }: Props) => {
         {isOutOfStock && (
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
             <div className="bg-white/90 px-4 py-2 rounded-lg">
-              <span className="text-gray-800 font-semibold text-sm">Tạm hết hàng</span>
+              <span className="text-foreground font-semibold text-sm">Tạm hết hàng</span>
             </div>
           </div>
         )}
@@ -85,21 +85,21 @@ export const ProductItem = ({ product, index, onQuickview }: Props) => {
       </div>
 
       {/* Product Info */}
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         <h3 className="font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
           {product.name}
         </h3>
 
         {/* Stock Information */}
         <div className="flex items-center gap-2 mb-3">
-          <Package className="w-4 h-4 text-gray-500" />
+          <Package className="w-4 h-4 text-foreground-secondary" />
           <span
             className={`text-sm ${
               isOutOfStock
                 ? 'text-red-600 font-medium'
                 : isLowStock
                 ? 'text-orange-600 font-medium'
-                : 'text-gray-600'
+                : 'text-foreground-secondary'
             }`}
           >
             {isOutOfStock ? 'Hết hàng' : `Còn ${product.stock} sản phẩm`}
@@ -110,7 +110,7 @@ export const ProductItem = ({ product, index, onQuickview }: Props) => {
         <div className="flex items-center justify-between mb-4">
           <div>
             {product.discountPercentage > 0 && (
-              <span className="text-xs text-gray-500 line-through block">
+              <span className="text-xs text-foreground-secondary line-through block">
                 {formatCurrency(Math.round(product.price / (1 - product.discountPercentage / 100)))}
               </span>
             )}
@@ -136,9 +136,9 @@ export const ProductItem = ({ product, index, onQuickview }: Props) => {
           whileHover={!isOutOfStock ? { scale: 1.02 } : {}}
           whileTap={!isOutOfStock ? { scale: 0.98 } : {}}
           disabled={isOutOfStock}
-          className={`w-full py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
+          className={`w-full py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 mt-auto ${
             isOutOfStock
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              ? 'bg-gray-300 text-foreground-secondary cursor-not-allowed'
               : 'bg-primary text-white hover:bg-primary/90'
           }`}
         >

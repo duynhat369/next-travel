@@ -1,3 +1,4 @@
+import { PaginationInfo } from '@/components/Pagination';
 import { connectToDatabase } from '@/lib/db/mongodb';
 import { Product } from '@/types/product.types';
 import mongoose from 'mongoose';
@@ -81,7 +82,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (category) {
-      filter.categoryType = category; // Direct match
+      filter.categoryType = { $in: [category] };
     }
 
     // Price range filter
@@ -135,7 +136,7 @@ export async function GET(request: NextRequest) {
         hasNext,
         hasPrev,
         limit,
-      },
+      } as PaginationInfo,
     });
   } catch (error) {
     console.error('Error fetching products:', error);

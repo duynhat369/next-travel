@@ -8,18 +8,19 @@ import { useQueryState } from 'nuqs';
 import { useEffect, useState } from 'react';
 
 interface Props {
-  lengthResult: number;
   isLoading?: boolean;
 }
 
-export default function ProductSearch({ lengthResult, isLoading }: Props) {
+export default function ProductSearch({}: Props) {
   const [search, setSearch] = useQueryState('search');
+  const [_, setPage] = useQueryState('page', { defaultValue: '1' });
   const [inputValue, setInputValue] = useState(search || '');
   const debouncedValue = useDebounce(inputValue, 500);
 
   // Search param when debounced value changes
   useEffect(() => {
     setSearch(debouncedValue || null);
+    setPage('1');
   }, [debouncedValue, setSearch]);
 
   return (
