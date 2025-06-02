@@ -97,7 +97,7 @@ export const Header = () => {
                   className="cursor-pointer focus:bg-secondary focus:text-white"
                   asChild
                 >
-                  <Link href="/profile">Thông tin cá nhân</Link>
+                  <Link href={`/profile/${session.user.id}`}>Thông tin cá nhân</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer focus:bg-secondary focus:text-white"

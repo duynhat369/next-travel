@@ -110,7 +110,7 @@ export default function TourDetailPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 mt-28">
+    <div className="container mx-auto px-4 py-8 mt-20 md:mt-28">
       <Breadcrumb className="mb-8">
         <BreadcrumbList>
           <BreadcrumbItem>

@@ -11,7 +11,7 @@ interface PriceRange {
   max: number;
 }
 
-const categories = [
+export const categories = [
   { id: 'all', label: 'Tất cả', value: null },
   { id: 'camping', label: 'Cắm trại', value: 'camping' },
   { id: 'souvenir', label: 'Đồ lưu niệm', value: 'souvenir' },

@@ -1,8 +1,9 @@
-import { ProductFilters, ProductResponse } from '@/types/product.types';
+import { ProductDetailResponse, ProductFilters, ProductsResponse } from '@/types/product.types';
+import mongoose from 'mongoose';
 import axiosClient from '../axios';
 
 export const productApi = {
-  getProducts: async (params: ProductFilters = {}): Promise<ProductResponse> => {
+  getProducts: async (params: ProductFilters = {}): Promise<ProductsResponse> => {
     let queryParams: ProductFilters = {};
 
     if (typeof params === 'number') {
@@ -41,7 +42,7 @@ export const productApi = {
       },
     });
   },
-  getTourById: async (slug: string): Promise<ProductResponse> => {
-    return axiosClient.get(`/products/${slug}`);
+  getProductById: async (id: string | mongoose.Types.ObjectId): Promise<ProductDetailResponse> => {
+    return axiosClient.get(`/products/${id}`);
   },
 };

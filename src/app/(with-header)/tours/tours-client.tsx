@@ -34,7 +34,7 @@ export default function ToursClient() {
   const total = data?.pages[0].total;
 
   return (
-    <main className="container mx-auto px-4 py-8 mt-28">
+    <main className="container mx-auto px-4 py-8 mt-20 md:mt-28">
       <TourHeader lengthResult={total} isLoading={isLoading} />
       <TourList
         tours={tours}

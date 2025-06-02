@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
 
     // Build sort object
     const sort: any = {};
-    if (sortBy === 'price') {
+    if (sortBy) {
       // only allowed sort by price
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
       sort['_id'] = sortOrder === 'asc' ? 1 : -1;

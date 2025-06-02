@@ -34,7 +34,7 @@ export interface ProductFilters {
   inStock?: boolean;
 }
 
-export interface ProductResponse {
+export interface ProductsResponse {
   success: boolean;
   products: Product[];
   pagination: {
@@ -45,6 +45,10 @@ export interface ProductResponse {
     hasPrev: boolean;
     limit: number;
   };
+}
+export interface ProductDetailResponse {
+  success: boolean;
+  product: Product;
 }
 
 export interface CreateProductRequest {
