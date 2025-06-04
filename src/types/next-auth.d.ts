@@ -9,9 +9,10 @@ declare module 'next-auth' {
     id: string;
     username: string;
     displayName: string;
+    email: string;
+    phoneNumber: string;
     avatar?: string;
   }
-
   /**
    * Mở rộng thuộc tính session.user
    */

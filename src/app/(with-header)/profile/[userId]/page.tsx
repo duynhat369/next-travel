@@ -11,11 +11,5 @@ export default function ProfilePage() {
 
   const { user } = session || {};
 
-  return (
-    <Profile
-      user={user}
-      //   canEdit={canEdit}
-      currentUser={session?.user}
-    />
-  );
+  return <Profile user={user} currentUser={session?.user} />;
 }

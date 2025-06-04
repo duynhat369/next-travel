@@ -7,6 +7,7 @@ import { mapValueToLabel } from '@/utils/mapping';
 import DOMPurify from 'dompurify';
 import { motion } from 'framer-motion';
 import { Minus, Package, Plus, ShoppingCart } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { categories } from '../../components/product-sidebar';
@@ -16,7 +17,8 @@ interface Props {
 }
 
 export function ProductDetail({ product }: Props) {
-  const { addItem } = useCartStore();
+  const { user } = useSession().data || {};
+  const { addToCart } = useCartStore();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -27,8 +29,8 @@ export function ProductDetail({ product }: Props) {
   const decrementQuantity = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleAddToCart = () => {
-    if (!isOutOfStock) {
-      addItem(product, quantity);
+    if (!isOutOfStock && user?.id) {
+      addToCart(user.id, product?._id || '', quantity);
     }
   };
 
