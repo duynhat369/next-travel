@@ -10,6 +10,7 @@ import { Minus, Package, Plus, ShoppingCart } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { categories } from '../../components/product-sidebar';
 
 interface Props {
@@ -29,9 +30,12 @@ export function ProductDetail({ product }: Props) {
   const decrementQuantity = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleAddToCart = () => {
-    if (!isOutOfStock && user?.id) {
-      addToCart(user.id, product?._id || '', quantity);
-    }
+    if (!user?.id) {
+      toast('Không thành công', {
+        description: 'Vui lòng đăng nhập để thêm giỏ hàng',
+      });
+      return;
+    } else addToCart(user.id, product?._id || '', quantity);
   };
 
   return (
@@ -42,7 +46,7 @@ export function ProductDetail({ product }: Props) {
           {/* Main Image */}
           <div className="relative aspect-square bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center rounded-2xl overflow-hidden">
             <Image
-              src={product.gallery[selectedImage] || '/placeholder.svg'}
+              src={product.gallery[selectedImage] || '/placeholder.png'}
               alt={product.name}
               fill
               className={`object-cover ${isOutOfStock ? 'grayscale' : ''}`}
@@ -93,7 +97,7 @@ export function ProductDetail({ product }: Props) {
                   }`}
                 >
                   <Image
-                    src={image || '/placeholder.svg'}
+                    src={image || '/placeholder.png'}
                     alt={`${product.name} ${index + 1}`}
                     fill
                     className="object-cover"

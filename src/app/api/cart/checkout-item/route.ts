@@ -1,14 +1,14 @@
+// /api/cart/checkout-item/route.ts - API thanh toán từng sản phẩm
 import { connectToDatabase } from '@/lib/db/mongodb';
+import { CartItem } from '@/types/cart.types';
 import mongoose from 'mongoose';
 import { type NextRequest, NextResponse } from 'next/server';
-import { getProductModel } from '../../products/route';
-import { getCartModel } from '../route';
+import { calculateCartTotals, getCartModel } from '../route';
 
 export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
     const Cart = getCartModel();
-    const Product = getProductModel();
 
     const { itemId, userId } = await request.json();
 
@@ -21,9 +21,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Item ID không hợp lệ' }, { status: 400 });
     }
 
-    // Tìm giỏ hàng pending của user
-    const cart = await Cart.findOne({ userId, status: 'pending' });
-
+    // Tìm giỏ hàng của user
+    const cart = await Cart.findOne({ userId });
     if (!cart) {
       return NextResponse.json(
         { success: false, error: 'Không tìm thấy giỏ hàng' },
@@ -32,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Tìm item trong giỏ hàng
-    const itemIndex = cart.items.findIndex((item: any) => item._id.toString() === itemId);
+    const itemIndex = cart.items.findIndex((item: CartItem) => item._id?.toString() === itemId);
 
     if (itemIndex === -1) {
       return NextResponse.json(
@@ -41,74 +40,45 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const item = cart.items[itemIndex];
-
-    // Kiểm tra tồn kho
-    const product = await Product.findById(item.productId);
-
-    if (!product) {
+    // Kiểm tra trạng thái hiện tại
+    if (cart.items[itemIndex].status === 'done') {
       return NextResponse.json(
-        { success: false, error: 'Sản phẩm không tồn tại' },
-        { status: 404 }
-      );
-    }
-
-    if (product.stock === 0) {
-      return NextResponse.json({ success: false, error: 'Sản phẩm đã hết hàng' }, { status: 400 });
-    }
-
-    if (product.stock < item.quantity) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: `Số lượng trong kho không đủ. Chỉ còn ${product.stock} sản phẩm`,
-        },
+        { success: false, error: 'Sản phẩm đã được thanh toán' },
         { status: 400 }
       );
     }
 
-    // Cập nhật tồn kho sản phẩm
-    await Product.findByIdAndUpdate(item.productId, {
-      $inc: { stock: -item.quantity },
-    });
+    if (cart.items[itemIndex].status === 'cancelled') {
+      return NextResponse.json({ success: false, error: 'Sản phẩm đã bị hủy' }, { status: 400 });
+    }
 
-    // Tạo đơn hàng mới cho item này
-    const orderCart = new Cart({
-      userId,
-      items: [item],
-      totalItems: item.quantity,
-      totalAmount: item.price * item.quantity,
-      status: 'done',
-    });
-    await orderCart.save();
+    // Cập nhật trạng thái thành done
+    cart.items[itemIndex].status = 'done';
 
-    // Xóa item khỏi giỏ hàng pending
-    cart.items.splice(itemIndex, 1);
-
-    // Tính toán lại tổng cho giỏ hàng pending
-    const totalItems = cart.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
-    const totalAmount = cart.items.reduce(
-      (sum: number, item: any) => sum + item.price * item.quantity,
-      0
-    );
-
+    // Tính toán lại tổng (chỉ tính các item pending)
+    const pendingItems = cart.items.filter((item: any) => item.status === 'pending');
+    const { totalItems, totalAmount } = calculateCartTotals(pendingItems);
     cart.totalItems = totalItems;
     cart.totalAmount = totalAmount;
 
     await cart.save();
 
-    // Tạo order ID
-    const orderId = `ORDER_${Date.now()}_${itemId.slice(-6)}`;
+    // Populate để trả về thông tin đầy đủ
+    const populatedCart = await Cart.findById(cart._id)
+      .populate('items.productId', 'name thumbnail price originalPrice discountPercentage stock')
+      .lean();
 
     return NextResponse.json({
       success: true,
       message: 'Thanh toán sản phẩm thành công',
-      orderId,
-      total: item.price * item.quantity,
-      item,
+      cart: populatedCart,
+      paidItem: cart.items[itemIndex],
     });
   } catch (error) {
-    console.error('Error during single item checkout:', error);
-    return NextResponse.json({ success: false, error: 'Thanh toán thất bại' }, { status: 500 });
+    console.error('Error checking out item:', error);
+    return NextResponse.json(
+      { success: false, error: 'Đã xảy ra lỗi khi thanh toán sản phẩm' },
+      { status: 500 }
+    );
   }
 }

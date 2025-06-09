@@ -1,3 +1,4 @@
+// /api/cart/route.ts - Thêm PUT và DELETE methods
 import { connectToDatabase } from '@/lib/db/mongodb';
 import type { Cart, CartItem } from '@/types/cart.types';
 import mongoose from 'mongoose';
@@ -15,6 +16,12 @@ const cartItemSchema = new mongoose.Schema<CartItem>({
   name: { type: String, required: true },
   description: { type: String },
   freeShip: { type: Boolean, default: false },
+  status: {
+    type: String,
+    enum: ['pending', 'done', 'cancelled'],
+    default: 'pending',
+    required: true,
+  },
 });
 
 const cartSchema = new mongoose.Schema<Cart>(
@@ -23,12 +30,6 @@ const cartSchema = new mongoose.Schema<Cart>(
     items: [cartItemSchema],
     totalItems: { type: Number, default: 0 },
     totalAmount: { type: Number, default: 0 },
-    status: {
-      type: String,
-      enum: ['pending', 'done', 'cancelled'],
-      default: 'pending',
-      required: true,
-    },
   },
   {
     timestamps: true,
@@ -48,7 +49,7 @@ export function getCartModel() {
 
 // Helper function to calculate cart totals
 export function calculateCartTotals(items: CartItem[]) {
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = items.length;
   const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   return { totalItems, totalAmount };
 }
@@ -58,107 +59,60 @@ export async function GET(request: NextRequest) {
     await connectToDatabase();
     const Cart = getCartModel();
 
+    // Đảm bảo model Product được đăng ký trước khi populate
+    getProductModel();
+
     const userId = request.nextUrl.searchParams.get('userId');
-    const getSingle = request.nextUrl.searchParams.get('single') === 'true'; // Để lấy 1 giỏ hàng cụ thể
-    const status = request.nextUrl.searchParams.get('status');
 
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json({ success: false, error: 'User ID không hợp lệ' }, { status: 400 });
     }
+    const cartData = await Cart.findOne({ userId }).lean();
+    const cart = cartData as Cart | null;
 
-    // Nếu muốn lấy 1 giỏ hàng cụ thể theo status
-    if (getSingle && status) {
-      if (!['pending', 'done', 'cancelled'].includes(status)) {
-        return NextResponse.json({ success: false, error: 'Status không hợp lệ' }, { status: 400 });
-      }
-
-      const cart = await Cart.findOne({ userId, status })
-        .populate('items.productId', 'name thumbnail price originalPrice discountPercentage stock')
-        .lean();
-
-      if (!cart) {
-        // Tạo giỏ hàng mới nếu chưa có (chỉ cho status pending)
-        if (status === 'pending') {
-          const newCart = new Cart({
-            userId,
-            items: [],
-            totalItems: 0,
-            totalAmount: 0,
-            status: 'pending',
-          });
-          await newCart.save();
-
-          return NextResponse.json({
-            success: true,
-            cart: { ...newCart.toObject(), items: [] },
-          });
-        } else {
-          return NextResponse.json({
-            success: true,
-            cart: {
-              userId,
-              items: [],
-              totalItems: 0,
-              totalAmount: 0,
-              status,
-            },
-          });
-        }
-      }
+    // Nếu chưa có giỏ hàng, tạo mới
+    if (!cart) {
+      const newCart = new Cart({
+        userId,
+        items: [],
+      });
+      await newCart.save();
 
       return NextResponse.json({
         success: true,
-        cart: cart,
+        cart: {
+          _id: newCart._id,
+          userId,
+          items: [],
+          createdAt: newCart.createdAt,
+          updatedAt: newCart.updatedAt,
+        },
+        stats: {
+          totalItems: 0,
+          pendingItems: 0,
+          doneItems: 0,
+          cancelledItems: 0,
+          totalQuantity: 0,
+          pendingQuantity: 0,
+        },
       });
     }
 
-    // Lấy toàn bộ giỏ hàng của user và sắp xếp
-    const carts = await Cart.find({ userId })
-      .populate('items.productId', 'name thumbnail price originalPrice discountPercentage stock')
-      .lean();
+    // Sắp xếp items trong cart: pending trước, done/cancelled sau
+    if (cart.items && cart.items.length > 0) {
+      cart.items.sort((a: any, b: any) => {
+        // Ưu tiên pending lên trước
+        if (a.status === 'pending' && b.status !== 'pending') return -1;
+        if (a.status !== 'pending' && b.status === 'pending') return 1;
 
-    // Sắp xếp theo yêu cầu:
-    // 1. Pending (chưa thanh toán) - sắp xếp theo thời gian tạo mới nhất
-    // 2. Done/Cancelled (đã thanh toán/hủy) - sắp xếp theo thời gian cũ nhất
-    const sortedCarts = carts.sort((a, b) => {
-      // Ưu tiên pending lên trên
-      if (a.status === 'pending' && b.status !== 'pending') return -1;
-      if (a.status !== 'pending' && b.status === 'pending') return 1;
-
-      // Nếu cùng là pending, sắp xếp theo thời gian tạo mới nhất (desc)
-      if (a.status === 'pending' && b.status === 'pending') {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      }
-
-      // Nếu cùng là done/cancelled, sắp xếp theo thời gian cũ nhất (asc)
-      return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
-    });
-
-    // Tính tổng thống kê
-    const totalCarts = carts.length;
-    const pendingCarts = carts.filter((cart) => cart.status === 'pending').length;
-    const doneCarts = carts.filter((cart) => cart.status === 'done').length;
-    const cancelledCarts = carts.filter((cart) => cart.status === 'cancelled').length;
-
-    const totalAmount = carts
-      .filter((cart) => cart.status === 'done')
-      .reduce((sum, cart) => sum + cart.totalAmount, 0);
-
-    const totalItems = carts
-      .filter((cart) => cart.status === 'done')
-      .reduce((sum, cart) => sum + cart.totalItems, 0);
+        // Cùng status thì sắp xếp theo thời gian thêm vào (mới nhất trước)
+        return new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime();
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      carts: sortedCarts,
-      summary: {
-        totalCarts,
-        pendingCarts,
-        doneCarts,
-        cancelledCarts,
-        totalAmount,
-        totalItems,
-      },
+      cart,
     });
   } catch (error) {
     console.error('Error fetching cart:', error);
@@ -176,7 +130,6 @@ export async function POST(request: NextRequest) {
     const Product = getProductModel();
 
     const { productId, quantity, userId } = await request.json();
-
     // Validation
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json({ success: false, error: 'User ID không hợp lệ' }, { status: 400 });
@@ -212,15 +165,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Tìm hoặc tạo giỏ hàng pending
-    let cart = await Cart.findOne({ userId, status: 'pending' });
+    // Tìm hoặc tạo giỏ hàng
+    let cart = await Cart.findOne({ userId });
     if (!cart) {
       cart = new Cart({
         userId,
         items: [],
         totalItems: 0,
         totalAmount: 0,
-        status: 'pending',
       });
     }
 
@@ -253,6 +205,7 @@ export async function POST(request: NextRequest) {
         description: product.description,
         freeShip: product.freeShip,
         quantity,
+        status: 'pending',
         addedAt: new Date(),
       };
       cart.items.push(cartItem);
@@ -284,25 +237,33 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// PUT - Cập nhật số lượng sản phẩm trong giỏ hàng
 export async function PUT(request: NextRequest) {
   try {
     await connectToDatabase();
     const Cart = getCartModel();
+    const Product = getProductModel();
 
-    const { userId, status } = await request.json();
+    const { itemId, quantity, userId } = await request.json();
 
     // Validation
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json({ success: false, error: 'User ID không hợp lệ' }, { status: 400 });
     }
 
-    if (!['pending', 'done', 'cancelled'].includes(status)) {
-      return NextResponse.json({ success: false, error: 'Status không hợp lệ' }, { status: 400 });
+    if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
+      return NextResponse.json({ success: false, error: 'Item ID không hợp lệ' }, { status: 400 });
     }
 
-    // Tìm giỏ hàng pending của user
-    const cart = await Cart.findOne({ userId, status: 'pending' });
+    if (!quantity || quantity < 1) {
+      return NextResponse.json(
+        { success: false, error: 'Số lượng phải lớn hơn 0' },
+        { status: 400 }
+      );
+    }
 
+    // Tìm giỏ hàng của user
+    const cart = await Cart.findOne({ userId });
     if (!cart) {
       return NextResponse.json(
         { success: false, error: 'Không tìm thấy giỏ hàng' },
@@ -310,31 +271,119 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Cập nhật status
-    cart.status = status;
+    // Tìm item trong giỏ hàng
+    const itemIndex = cart.items.findIndex((item: any) => item._id.toString() === itemId);
+
+    if (itemIndex === -1) {
+      return NextResponse.json(
+        { success: false, error: 'Không tìm thấy sản phẩm trong giỏ hàng' },
+        { status: 404 }
+      );
+    }
+
+    // Kiểm tra số lượng tồn kho
+    const product = await Product.findById(cart.items[itemIndex].productId);
+    if (!product) {
+      return NextResponse.json(
+        { success: false, error: 'Sản phẩm không tồn tại' },
+        { status: 404 }
+      );
+    }
+
+    // if (product.stock < quantity) {
+    //   return NextResponse.json(
+    //     { success: false, error: 'Số lượng trong kho không đủ' },
+    //     { status: 400 }
+    //   );
+    // }
+
+    // Cập nhật số lượng
+    cart.items[itemIndex].quantity = quantity;
+
+    // Tính toán lại tổng
+    const { totalItems, totalAmount } = calculateCartTotals(cart.items);
+    cart.totalItems = totalItems;
+    cart.totalAmount = totalAmount;
+
     await cart.save();
 
-    // Nếu status là done, tạo giỏ hàng pending mới cho user
-    if (status === 'done') {
-      const newCart = new Cart({
-        userId,
-        items: [],
-        totalItems: 0,
-        totalAmount: 0,
-        status: 'pending',
-      });
-      await newCart.save();
-    }
+    // Populate để trả về thông tin đầy đủ
+    const populatedCart = await Cart.findById(cart._id)
+      .populate('items.productId', 'name thumbnail price originalPrice discountPercentage stock')
+      .lean();
 
     return NextResponse.json({
       success: true,
-      message: `Cập nhật trạng thái giỏ hàng thành ${status}`,
-      cart,
+      message: 'Cập nhật số lượng thành công',
+      cart: populatedCart,
     });
   } catch (error) {
-    console.error('Error updating cart status:', error);
+    console.error('Error updating cart item:', error);
     return NextResponse.json(
-      { success: false, error: 'Đã xảy ra lỗi khi cập nhật trạng thái giỏ hàng' },
+      { success: false, error: 'Đã xảy ra lỗi khi cập nhật sản phẩm' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE - Xóa sản phẩm khỏi giỏ hàng
+export async function DELETE(request: NextRequest) {
+  try {
+    await connectToDatabase();
+    const Cart = getCartModel();
+
+    const { itemId, userId } = await request.json();
+
+    // Validation
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return NextResponse.json({ success: false, error: 'User ID không hợp lệ' }, { status: 400 });
+    }
+
+    if (!itemId || !mongoose.Types.ObjectId.isValid(itemId)) {
+      return NextResponse.json({ success: false, error: 'Item ID không hợp lệ' }, { status: 400 });
+    }
+
+    // Tìm giỏ hàng của user
+    const cart = await Cart.findOne({ userId });
+    if (!cart) {
+      return NextResponse.json(
+        { success: false, error: 'Không tìm thấy giỏ hàng' },
+        { status: 404 }
+      );
+    }
+
+    // Tìm và xóa item khỏi giỏ hàng
+    const originalLength = cart.items.length;
+    cart.items = cart.items.filter((item: any) => item._id.toString() !== itemId);
+
+    if (cart.items.length === originalLength) {
+      return NextResponse.json(
+        { success: false, error: 'Không tìm thấy sản phẩm trong giỏ hàng' },
+        { status: 404 }
+      );
+    }
+
+    // Tính toán lại tổng
+    const { totalItems, totalAmount } = calculateCartTotals(cart.items);
+    cart.totalItems = totalItems;
+    cart.totalAmount = totalAmount;
+
+    await cart.save();
+
+    // Populate để trả về thông tin đầy đủ
+    const populatedCart = await Cart.findById(cart._id)
+      .populate('items.productId', 'name thumbnail price originalPrice discountPercentage stock')
+      .lean();
+
+    return NextResponse.json({
+      success: true,
+      message: 'Xóa sản phẩm khỏi giỏ hàng thành công',
+      cart: populatedCart,
+    });
+  } catch (error) {
+    console.error('Error removing cart item:', error);
+    return NextResponse.json(
+      { success: false, error: 'Đã xảy ra lỗi khi xóa sản phẩm' },
       { status: 500 }
     );
   }

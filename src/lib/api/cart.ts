@@ -1,114 +1,106 @@
-import type { CartResponse, UpdateCartItemRequest } from '@/types/cart.types';
+// lib/cart.ts - Cập nhật đầy đủ các phương thức
+
+import type { CartResponse } from '@/types/cart.types';
+import axiosClient from '../axios';
+
+export interface AddToCartResponse {
+  cart: any;
+  success: boolean;
+  message: string;
+}
+
+export interface UpdateCartItemResponse {
+  cart: any;
+  success: boolean;
+  message: string;
+}
+
+export interface RemoveCartItemResponse {
+  cart: any;
+  success: boolean;
+  message: string;
+}
+
+export interface CheckoutItemResponse {
+  cart: any;
+  paidItem: any;
+  success: boolean;
+  message: string;
+}
 
 export const cartApi = {
   // Lấy giỏ hàng của user theo status
-  getCart: async (userId: string, status = 'pending'): Promise<CartResponse> => {
-    const response = await fetch(`/api/cart?userId=${userId}&status=${status}&single=true`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch cart');
-    }
-    return response.json();
+  getCart: async (userId: string): Promise<CartResponse> => {
+    return axiosClient.get(`/cart?userId=${userId}`);
   },
 
   // Thêm sản phẩm vào giỏ hàng
-  addToCart: async (data: { productId: string; quantity: number; userId: string }) => {
-    const response = await fetch('/api/cart', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to add item to cart');
-    }
-
-    return response.json();
+  addToCart: async (data: {
+    productId: string;
+    quantity: number;
+    userId: string;
+  }): Promise<AddToCartResponse> => {
+    return await axiosClient.post('/cart', data);
   },
 
   // Cập nhật số lượng sản phẩm trong giỏ hàng
-  updateCartItem: async (itemId: string, data: UpdateCartItemRequest & { userId: string }) => {
-    const response = await fetch(`/api/cart/${itemId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to update cart item');
-    }
-
-    return response.json();
+  updateCartItem: async (data: {
+    itemId: string;
+    quantity: number;
+    userId: string;
+  }): Promise<UpdateCartItemResponse> => {
+    return await axiosClient.put('/cart', data);
   },
 
   // Xóa sản phẩm khỏi giỏ hàng
-  removeCartItem: async (itemId: string, userId: string) => {
-    const response = await fetch(`/api/cart/${itemId}?userId=${userId}`, {
-      method: 'DELETE',
+  removeCartItem: async (itemId: string, userId: string): Promise<RemoveCartItemResponse> => {
+    return await axiosClient.delete('/cart', {
+      data: { itemId, userId },
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to remove cart item');
-    }
-
-    return response.json();
   },
 
-  // Thanh toán một sản phẩm
-  checkoutSingleItem: async (itemId: string, userId: string) => {
-    const response = await fetch('/api/cart/checkout-item', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ itemId, userId }),
-    });
+  // Thanh toán theo sản phẩm -> Đổi trạng thái từ pending sang done
+  checkoutSingleItem: async (itemId: string, userId: string): Promise<CheckoutItemResponse> => {
+    return axiosClient.post('/cart/checkout-item', { itemId, userId });
+  },
+};
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw data;
-    }
-
-    return data;
+// Các utility functions để xử lý cart data
+export const cartUtils = {
+  // Tính tổng tiền cho những item có status cụ thể
+  calculateTotalByStatus: (items: any[], status: string) => {
+    return items
+      .filter((item) => item.status === status)
+      .reduce((total, item) => total + item.price * item.quantity, 0);
   },
 
-  // Cập nhật status giỏ hàng
-  updateCartStatus: async (userId: string, status: 'pending' | 'done' | 'cancelled') => {
-    const response = await fetch('/api/cart', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId, status }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to update cart status');
-    }
-
-    return response.json();
+  // Đếm số lượng item theo status
+  countItemsByStatus: (items: any[], status: string) => {
+    return items
+      .filter((item) => item.status === status)
+      .reduce((count, item) => count + item.quantity, 0);
   },
 
-  // Thanh toán toàn bộ giỏ hàng
-  checkout: async (userId: string) => {
-    const response = await fetch('/api/cart/checkout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId }),
-    });
+  // Lấy danh sách item theo status
+  getItemsByStatus: (items: any[], status: string) => {
+    return items.filter((item) => item.status === status);
+  },
 
-    const data = await response.json();
+  // Format giá tiền VND
+  formatPrice: (price: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(price);
+  },
 
-    if (!response.ok) {
-      throw data;
-    }
+  // Tính phần trăm giảm giá
+  calculateDiscountAmount: (originalPrice: number, discountPercentage: number) => {
+    return originalPrice * (discountPercentage / 100);
+  },
 
-    return data;
+  // Tính giá sau khi giảm
+  calculateFinalPrice: (originalPrice: number, discountPercentage: number) => {
+    return originalPrice - originalPrice * (discountPercentage / 100);
   },
 };

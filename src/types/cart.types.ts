@@ -10,6 +10,7 @@ export interface CartItem {
   name: string;
   description: string;
   freeShip: boolean;
+  status: 'pending' | 'done' | 'cancelled';
 }
 
 export interface Cart {
@@ -18,7 +19,6 @@ export interface Cart {
   items: CartItem[];
   totalItems: number;
   totalAmount: number;
-  status: 'pending' | 'done' | 'cancelled';
   createdAt?: Date;
   updatedAt?: Date;
 }

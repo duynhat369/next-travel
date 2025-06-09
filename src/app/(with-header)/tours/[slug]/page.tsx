@@ -17,6 +17,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { TOURS_PAGE } from '@/constants';
+import { bookingApi } from '@/lib/api/booking';
 import { tourApi } from '@/lib/api/tour';
 import { BookingFormValues, bookingSchema } from '@/lib/schemas/tour';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -67,7 +68,7 @@ export default function TourDetailPage() {
   const { tour } = tourResponse || {};
 
   const { mutate: createBooking } = useMutation({
-    mutationFn: tourApi.createBooking,
+    mutationFn: bookingApi.createBooking,
     onSuccess: (data, variables) => {
       setShowConfirmation(true);
       // reset();

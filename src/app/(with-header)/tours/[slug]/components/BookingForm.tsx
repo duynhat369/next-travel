@@ -172,7 +172,7 @@ export const BookingForm = ({
                 Số điện thoại
               </Label>
               <Input
-                id="phoneBumber"
+                id="phoneNumber"
                 className="bg-white border-input"
                 {...bookingRegister('phoneNumber')}
               />

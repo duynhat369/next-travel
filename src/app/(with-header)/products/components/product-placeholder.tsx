@@ -56,7 +56,7 @@ export function ProductPlaceholder({ products, pagination, onPageChange, isLoadi
       >
         <Package className="w-16 h-16 mx-auto text-gray-300 mb-4" />
         <h3 className="text-xl font-semibold text-foreground mb-2">Không tìm thấy sản phẩm</h3>
-        <p className="text-foreground-secondary">Vui lòng thử lại với bộ lọc khác</p>
+        <p className="text-foreground-secondary">Vui lòng thử lại</p>
       </motion.div>
     );
   }

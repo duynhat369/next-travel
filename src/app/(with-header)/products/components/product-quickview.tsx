@@ -8,8 +8,10 @@ import { formatCurrency } from '@/utils/currency';
 import { mapValueToLabel } from '@/utils/mapping';
 import { motion } from 'framer-motion';
 import { Minus, Package, Plus, ShoppingCart } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { categories } from './product-sidebar';
 
 interface ProductQuickViewProps {
@@ -19,7 +21,8 @@ interface ProductQuickViewProps {
 }
 
 export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewProps) {
-  const { addItem } = useCartStore();
+  const { addToCart } = useCartStore();
+  const { user } = useSession().data || {};
   const [quantity, setQuantity] = useState(1);
 
   const isOutOfStock = product.stock === 0;
@@ -30,8 +33,12 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
 
   const handleAddToCart = () => {
     if (!isOutOfStock) {
-      addItem(product, quantity);
-      onClose();
+      if (!user?.id) {
+        toast('Không thành công', {
+          description: 'Vui lòng đăng nhập để thêm giỏ hàng',
+        });
+        return;
+      } else addToCart(user.id, product?._id || '', quantity);
     }
   };
 
@@ -44,7 +51,7 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
           {/* Product Image */}
           <div className="relative aspect-square bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
             <Image
-              src={product.thumbnail || '/placeholder.svg'}
+              src={product.thumbnail || '/placeholder.png'}
               alt={product.name}
               fill
               className={`object-cover ${isOutOfStock ? 'grayscale' : ''}`}

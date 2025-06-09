@@ -3,6 +3,50 @@ import getBookingModel from '@/lib/models/Booking';
 import User from '@/lib/models/User';
 import mongoose from 'mongoose';
 import { NextRequest, NextResponse } from 'next/server';
+import { getTourModel } from '../tours/route';
+
+export async function GET(request: NextRequest) {
+  try {
+    await connectToDatabase();
+    const Booking = getBookingModel();
+    const Tour = getTourModel();
+
+    const userId = request.nextUrl.searchParams.get('userId');
+
+    // Validation
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return NextResponse.json({ success: false, error: 'User ID không hợp lệ' }, { status: 400 });
+    }
+
+    // Kiểm tra user có tồn tại không
+    const user = await User.findById(new mongoose.Types.ObjectId(userId));
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'User không tồn tại' }, { status: 404 });
+    }
+
+    // Lấy toàn bộ bookings của user, sắp xếp theo ngày đặt mới nhất
+    // Populate cả thông tin user và tour
+    const bookings = await Booking.find({ userId: new mongoose.Types.ObjectId(userId) })
+      .populate('userId', 'name email avatar') // Populate thông tin user
+      .populate(
+        'tourId',
+        'title slug description price originalPrice discountPercentage thumbnail isHot gallery'
+      ) // Populate thông tin tour
+      .sort({ bookingDate: -1 })
+      .lean();
+
+    return NextResponse.json({
+      success: true,
+      bookings,
+    });
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    return NextResponse.json(
+      { success: false, error: 'Đã xảy ra lỗi khi lấy danh sách đặt tour' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {

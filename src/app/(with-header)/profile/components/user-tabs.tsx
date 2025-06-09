@@ -8,23 +8,18 @@ import { motion } from 'framer-motion';
 import { Calendar, ShoppingCart } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { BookingContent } from './booking/booking-content';
 import { CartContent } from './cart/cart-content';
 
-interface Props {}
-
-export const UserTabs = ({}: Props) => {
+export const UserTabs = () => {
   const params = useParams();
 
   const { userId } = params;
   const [activeTab, setActiveTab] = useState('cart');
 
   // Fetch cart data using React Query
-  const {
-    data: cartData,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['cart-by-user', userId],
+  const { data: cartData, error } = useQuery({
+    queryKey: ['cart-by-user-1', userId],
     queryFn: () => cartApi.getCart((userId as string) || ''),
     enabled: activeTab === 'cart', // Only fetch when cart tab is active
   });
@@ -35,7 +30,7 @@ export const UserTabs = ({}: Props) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
     >
-      <Card className="p-0">
+      <Card className="p-0 border-gray-200">
         <CardContent className="p-0">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="border-b border-gray-200">
@@ -89,27 +84,12 @@ export const UserTabs = ({}: Props) => {
                     </p>
                   </motion.div>
                 ) : (
-                  <CartContent
-                    cartData={cartData}
-                    isLoading={isLoading}
-                    userId={userId as string}
-                  />
+                  <CartContent userId={userId as string} />
                 )}
               </TabsContent>
 
               <TabsContent value="booking-history" className="mt-0">
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="text-center py-12"
-                >
-                  <div className="text-6xl mb-4">📋</div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">Tour booking</h3>
-                  <p className="text-foreground-secondary">
-                    Lịch sử đặt tour sẽ được hiển thị ở đây
-                  </p>
-                </motion.div>
+                {userId && <BookingContent userId={userId as string} />}
               </TabsContent>
             </div>
           </Tabs>

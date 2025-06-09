@@ -1,16 +1,24 @@
 'use client';
 
-import type { CartResponse } from '@/types/cart.types';
+import { useCartStore } from '@/store/cart-store';
 import { motion } from 'framer-motion';
+import { ShoppingCart } from 'lucide-react';
+import { useMemo } from 'react';
 import { CartItemComponent } from './cart-item';
 
 interface Props {
-  cartData: CartResponse | undefined;
-  isLoading: boolean;
   userId: string;
 }
 
-export const CartContent = ({ cartData, isLoading, userId }: Props) => {
+export const CartContent = ({ userId }: Props) => {
+  const { carts, isLoading } = useCartStore();
+
+  // Sử dụng React 19's use() hook để fetch data
+  const cartData = useMemo(() => {
+    if (!carts.length) return null;
+    return carts[0];
+  }, [carts]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -19,7 +27,8 @@ export const CartContent = ({ cartData, isLoading, userId }: Props) => {
     );
   }
 
-  if (!cartData || cartData.cart?.items.length === 0) {
+  // Nếu không có giỏ hàng hoặc giỏ hàng trống
+  if (!cartData?.items?.length) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -36,23 +45,30 @@ export const CartContent = ({ cartData, isLoading, userId }: Props) => {
     );
   }
 
+  const pendingItems = cartData.items.filter((item) => item.status === 'pending');
+  const doneItems = cartData.items.filter((item) => item.status === 'done');
+
   return (
     <div className="mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
+        <div className="p-2 bg-primary/20 rounded-lg">
+          <ShoppingCart className="w-6 h-6 text-primary" />
+        </div>
         <div>
-          <h2 className="text-2xl font-bold text-foreground">
-            Giỏ hàng của bạn <small> ({cartData.cart?.totalItems} sản phẩm)</small>
-          </h2>
-          <p className="text-foreground-secondary">Thanh toán từng sản phẩm một cách dễ dàng</p>
+          <h2 className="text-2xl font-bold text-foreground">Giỏ hàng của bạn</h2>
+          <p className="text-foreground-secondary">
+            {pendingItems.length} sản phẩm chờ thanh toán • {doneItems.length} sản phẩm đã thanh
+            toán
+          </p>
         </div>
       </div>
 
-      {/* Cart Items */}
+      {/* All Items - React 19 sẽ tự động handle optimistic updates */}
       <div className="space-y-6">
-        {cartData.cart?.items.map((item, index) => (
+        {cartData.items.map((item, index) => (
           <motion.div
-            key={`${item._id}`}
+            key={item._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}

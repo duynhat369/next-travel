@@ -143,7 +143,7 @@ export const Team = () => {
                     className="relative mx-auto w-32 h-32 rounded-full overflow-hidden border-4 border-primary shadow-xl"
                   >
                     <Image
-                      src={member.avatar || '/placeholder.svg'}
+                      src={member.avatar || '/placeholder.png'}
                       alt={member.name}
                       width={128}
                       height={128}

@@ -1,14 +1,13 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { cartApi } from '@/lib/api/cart';
+import { useCartStore } from '@/store/cart-store';
 import type { CartItem } from '@/types/cart.types';
 import { formatCurrency } from '@/utils/currency';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { CreditCard, Minus, Plus, Trash2 } from 'lucide-react';
+import { CheckCircle, CreditCard, Minus, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
-import { toast } from 'sonner';
+import { useOptimistic, useTransition } from 'react';
 
 interface Props {
   item: CartItem;
@@ -16,100 +15,108 @@ interface Props {
 }
 
 export const CartItemComponent = ({ item, userId }: Props) => {
-  const queryClient = useQueryClient();
+  const { updateCartItem, removeCartItem, checkoutItem } = useCartStore();
+  const [isPending, startTransition] = useTransition();
 
-  // Update cart item quantity
-  const { mutate: updateQuantity, isPending: isUpdating } = useMutation({
-    mutationFn: async ({ quantity }: { quantity: number }) => {
-      return cartApi.updateCartItem(item._id as string, { quantity, userId });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart', userId] });
-    },
-    onError: () => {
-      toast.error('Không thể cập nhật số lượng');
-    },
-  });
+  // Optimistic updates cho quantity
+  const [optimisticItem, updateOptimisticItem] = useOptimistic(
+    item,
+    (currentItem, newQuantity: number) => ({
+      ...currentItem,
+      quantity: newQuantity,
+    })
+  );
 
-  // Remove cart item
-  const { mutate: removeItem, isPending: isRemoving } = useMutation({
-    mutationFn: async () => {
-      return cartApi.removeCartItem(item._id as string, userId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart', userId] });
-      toast.success('Đã xóa sản phẩm khỏi giỏ hàng');
-    },
-    onError: () => {
-      toast.error('Không thể xóa sản phẩm');
-    },
-  });
+  // Optimistic updates cho status
+  const [optimisticStatus, updateOptimisticStatus] = useOptimistic(
+    item.status,
+    (currentStatus, newStatus: 'pending' | 'done' | 'cancelled') => newStatus
+  );
 
-  // Checkout single item
-  const { mutate: checkoutItem, isPending: isCheckingOut } = useMutation({
-    mutationFn: async () => {
-      return cartApi.checkoutSingleItem(item._id as string, userId);
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['cart', userId] });
-      toast.success(`Thanh toán thành công! Mã đơn hàng: ${data.orderId}`);
-    },
-    onError: (error: any) => {
-      if (error.error?.includes('hết hàng')) {
-        toast.error('Sản phẩm đã hết hàng');
-      } else if (error.error?.includes('không đủ')) {
-        toast.error('Số lượng trong kho không đủ');
-      } else {
-        toast.error('Thanh toán thất bại');
-      }
-    },
-  });
+  const isPaid = optimisticStatus === 'done';
 
   const handleQuantityChange = (newQuantity: number) => {
+    if (isPaid) return;
+
     if (newQuantity <= 0) {
-      removeItem();
+      // Optimistic remove
+      startTransition(async () => {
+        updateOptimisticItem(0); // Set quantity to 0 immediately
+        await removeCartItem(userId, item._id as string);
+      });
     } else {
-      updateQuantity({ quantity: newQuantity });
+      // Optimistic update quantity
+      startTransition(async () => {
+        updateOptimisticItem(newQuantity); // Update UI immediately
+        await updateCartItem(userId, item._id as string, newQuantity);
+      });
     }
   };
 
-  const handleCheckout = () => {
-    checkoutItem();
+  const handleRemoveItem = () => {
+    if (isPaid) return;
+
+    startTransition(async () => {
+      updateOptimisticItem(0); // Hide item immediately
+      await removeCartItem(userId, item._id as string);
+    });
   };
 
-  const isOutOfStock = false;
-  const isInsufficientStock = false;
-  const totalPrice = item.price * item.quantity;
+  const handleCheckout = () => {
+    if (isPaid) return;
+
+    startTransition(async () => {
+      updateOptimisticStatus('done'); // Update status immediately
+      await checkoutItem(userId, item._id as string);
+    });
+  };
+
+  const totalPrice = optimisticItem.price * optimisticItem.quantity;
+
+  // Don't render if optimistically removed
+  if (optimisticItem.quantity === 0) {
+    return null;
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`group relative overflow-hidden rounded-xl border transition-all duration-300 hover:shadow-lg ${
-        isOutOfStock || isInsufficientStock
-          ? 'border-red-200 bg-red-50'
-          : 'border-gray-200 bg-white hover:border-primary/30'
+      className={`group relative overflow-hidden rounded-xl border transition-all duration-300 ${
+        isPaid
+          ? 'border-green-200 bg-green-50'
+          : 'border-gray-200 bg-white hover:shadow-lg hover:border-primary/30'
       }`}
     >
-      {/* Gradient overlay on hover */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Gradient overlay on hover - only for unpaid items */}
+      {!isPaid && (
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      )}
+
+      {/* Paid badge */}
+      {isPaid && (
+        <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm z-20">
+          <CheckCircle className="w-3 h-3" />
+          Đã thanh toán
+        </div>
+      )}
 
       <div className="relative p-6">
-        <div className="flex gap-6">
+        <div className="flex flex-col md:flex-row gap-6">
           {/* Product Image */}
-          <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 shadow-sm">
+          <div className="relative w-full md:w-24 h-40 md:h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 shadow-sm">
             <Image
-              src={item.thumbnail || '/placeholder.svg'}
-              alt={item.name}
+              src={optimisticItem.thumbnail || '/placeholder.svg'}
+              alt={optimisticItem.name}
               fill
-              className={`object-cover transition-transform duration-300 group-hover:scale-105 ${
-                isOutOfStock ? 'grayscale' : ''
-              }`}
+              className={`object-cover transition-transform duration-300 ${
+                isPaid ? '' : 'group-hover:scale-105'
+              } ${isPaid ? 'opacity-90' : ''}`}
             />
-            {item.discountPercentage > 0 && (
+            {optimisticItem.discountPercentage > 0 && (
               <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                -{item.discountPercentage}%
+                -{optimisticItem.discountPercentage}%
               </div>
             )}
           </div>
@@ -117,70 +124,90 @@ export const CartItemComponent = ({ item, userId }: Props) => {
           {/* Product Info */}
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-start mb-3">
-              <h3 className="font-semibold text-lg text-foreground truncate pr-4 group-hover:text-primary transition-colors">
-                {item.name}
-              </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => removeItem()}
-                disabled={isUpdating || isRemoving}
-                className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors"
+              <h3
+                className={`font-semibold text-lg truncate pr-4 ${
+                  isPaid
+                    ? 'text-gray-700'
+                    : 'text-foreground group-hover:text-primary transition-colors'
+                }`}
               >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+                {optimisticItem.name}
+              </h3>
+              {!isPaid && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRemoveItem}
+                  disabled={isPending || isPaid}
+                  className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-colors cursor-pointer"
+                >
+                  {isPending ? (
+                    <div className="w-4 h-4 border-2 border-red-300 border-t-red-500 rounded-full animate-spin" />
+                  ) : (
+                    <Trash2 className="w-4 h-4" />
+                  )}
+                </Button>
+              )}
             </div>
 
             {/* Price Section */}
             <div className="flex items-center gap-3 mb-4">
               <div className="flex items-center gap-2">
-                {item.discountPercentage > 0 && (
+                {optimisticItem.discountPercentage > 0 && (
                   <span className="text-sm text-gray-500 line-through">
-                    {formatCurrency(item.originalPrice)} VNĐ
+                    {formatCurrency(optimisticItem.originalPrice)} VNĐ
                   </span>
                 )}
-                <span className="text-xl font-bold text-primary">
-                  {formatCurrency(item.price)} VNĐ
+                <span className={`text-xl font-bold ${isPaid ? 'text-gray-700' : 'text-primary'}`}>
+                  {formatCurrency(optimisticItem.price)} VNĐ
                 </span>
               </div>
             </div>
 
             {/* Quantity and Total */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0">
               {/* Quantity Controls */}
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium text-gray-600">Số lượng:</span>
-                <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleQuantityChange(item.quantity - 1)}
-                    disabled={isUpdating || isRemoving}
-                    className="w-8 h-8 p-0 hover:bg-white rounded-md"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-
-                  <span className="w-12 text-center font-semibold bg-white rounded px-3 py-1">
-                    {item.quantity}
+                {isPaid ? (
+                  <span className="px-3 py-1 bg-gray-100 rounded font-semibold">
+                    {optimisticItem.quantity}
                   </span>
+                ) : (
+                  <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleQuantityChange(optimisticItem.quantity - 1)}
+                      disabled={isPending || isPaid}
+                      className="w-8 h-8 p-0 hover:bg-primary/10 rounded-md cursor-pointer"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleQuantityChange(item.quantity + 1)}
-                    disabled={isUpdating || isRemoving}
-                    className="w-8 h-8 p-0 hover:bg-white rounded-md"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
+                    <span className="w-12 text-center font-semibold bg-white rounded px-3 py-1">
+                      {optimisticItem.quantity}
+                    </span>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleQuantityChange(optimisticItem.quantity + 1)}
+                      disabled={isPending || isPaid}
+                      className="w-8 h-8 p-0 hover:bg-primary/10 rounded-md cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {/* Total Price */}
               <div className="text-right">
                 <p className="text-sm text-gray-600 mb-1">Thành tiền</p>
-                <p className="text-2xl font-bold text-primary">{formatCurrency(totalPrice)} VNĐ</p>
+                <p className={`text-2xl font-bold ${isPaid ? 'text-gray-700' : 'text-primary'}`}>
+                  {formatCurrency(totalPrice)} VNĐ
+                </p>
               </div>
             </div>
           </div>
@@ -188,37 +215,44 @@ export const CartItemComponent = ({ item, userId }: Props) => {
 
         {/* Checkout Section */}
         <div className="mt-6 pt-4 border-t border-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <span>💳</span>
-              <span>Thanh toán ngay sản phẩm này</span>
+          {isPaid ? (
+            <div className="bg-green-100 border border-green-200 rounded-lg p-4 text-green-800 flex items-center gap-3">
+              <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+              <div>
+                <p className="font-medium">Sản phẩm đã được thanh toán thành công</p>
+                <p className="text-sm text-green-700 mt-1">
+                  Cảm ơn bạn đã mua hàng! Sản phẩm sẽ được xử lý trong thời gian sớm nhất.
+                </p>
+              </div>
             </div>
-
+          ) : (
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
                 onClick={handleCheckout}
-                disabled={isCheckingOut || isUpdating || isRemoving}
-                className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                disabled={isPending || isPaid}
+                className="w-full bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
               >
                 <CreditCard className="w-4 h-4 mr-2" />
-                {isCheckingOut ? (
+                {isPending ? (
                   <span className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     Đang xử lý...
                   </span>
                 ) : (
-                  `Thanh toán ${formatCurrency(totalPrice)} VNĐ`
+                  'Thanh toán'
                 )}
               </Button>
             </motion.div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Loading overlay */}
-      {(isUpdating || isRemoving || isCheckingOut) && (
-        <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center rounded-xl">
-          <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      {/* Loading overlay - chỉ hiển thị khi có transition pending */}
+      {isPending && (
+        <div className="absolute inset-0 bg-white/30 backdrop-blur-sm flex items-center justify-center rounded-xl">
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+          </div>
         </div>
       )}
     </motion.div>

@@ -8,8 +8,10 @@ import type { Product } from '@/types/product.types';
 import { formatCurrency } from '@/utils/currency';
 import { motion } from 'framer-motion';
 import { Eye, Package, ShoppingCart } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 interface Props {
   product: Product;
@@ -18,7 +20,9 @@ interface Props {
 }
 
 export const ProductItem = ({ product, index, onQuickview }: Props) => {
-  const { addItem } = useCartStore();
+  const { addToCart } = useCartStore();
+  const { data } = useSession();
+  const userId = data?.user?.id;
   const isOutOfStock = product.stock === 0;
   const isLowStock = product.stock > 0 && product.stock <= 10;
 
@@ -31,8 +35,12 @@ export const ProductItem = ({ product, index, onQuickview }: Props) => {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    addItem(product);
+    if (!userId) {
+      toast('Không thành công', {
+        description: 'Vui lòng đăng nhập để thêm giỏ hàng',
+      });
+      return;
+    } else addToCart(userId, product._id || '', 1);
   };
 
   return (
@@ -49,7 +57,7 @@ export const ProductItem = ({ product, index, onQuickview }: Props) => {
         {/* Product Image */}
         <div className="relative aspect-square bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center group-hover:from-gray-300 group-hover:to-gray-400 transition-all duration-300 overflow-hidden">
           <Image
-            src={product.thumbnail || '/placeholder.svg'}
+            src={product.thumbnail || '/placeholder.png'}
             alt={product.name}
             fill
             className={`object-cover group-hover:scale-110 transition-transform duration-300 ${
