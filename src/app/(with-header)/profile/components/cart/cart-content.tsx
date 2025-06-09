@@ -13,7 +13,6 @@ interface Props {
 export const CartContent = ({ userId }: Props) => {
   const { carts, isLoading } = useCartStore();
 
-  // Sử dụng React 19's use() hook để fetch data
   const cartData = useMemo(() => {
     if (!carts.length) return null;
     return carts[0];
@@ -38,9 +37,7 @@ export const CartContent = ({ userId }: Props) => {
       >
         <div className="text-6xl mb-4">🛒</div>
         <h3 className="text-xl font-semibold text-foreground mb-2">Giỏ hàng trống</h3>
-        <p className="text-foreground-secondary">
-          Hãy thêm sản phẩm vào giỏ hàng để bắt đầu mua sắm
-        </p>
+        <p className="text-foreground-secondary">Hãy thêm sản phẩm vào giỏ hàng để thanh toán</p>
       </motion.div>
     );
   }

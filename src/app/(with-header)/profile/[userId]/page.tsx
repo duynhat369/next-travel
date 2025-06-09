@@ -5,17 +5,32 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { User } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { Profile } from '../components/profile';
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
-  const { user } = session || {};
+  const params = useParams();
+  const router = useRouter();
+
+  const { userId: urlUserId } = params;
+  const { id: sessionUserId } = session?.user || {};
+
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (urlUserId && urlUserId !== sessionUserId) {
+      router.replace('/');
+      return;
+    }
+  }, [session, status, urlUserId, router]);
 
   // Query để lấy thông tin user từ API
   const { data: userProfile, isLoading: isLoadingProfile } = useQuery({
-    queryKey: ['user', user?.id],
-    queryFn: () => userApi.getProfile(user?.id as string),
-    enabled: !!user?.id,
+    queryKey: ['user', sessionUserId],
+    queryFn: () => userApi.getProfile(sessionUserId as string),
+    enabled: !!sessionUserId,
     retry: 1,
   });
 

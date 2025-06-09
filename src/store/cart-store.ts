@@ -11,7 +11,7 @@ interface CartState {
   isLoading: boolean;
 
   // Actions - React 19 sẽ handle optimistic updates
-  fetchCart: (userId: string) => Promise<void>;
+  setCarts: (carts: Cart[]) => void;
   addToCart: (userId: string, productId: string, quantity?: number) => Promise<void>;
   updateCartItem: (userId: string, itemId: string, quantity: number) => Promise<void>;
   removeCartItem: (userId: string, itemId: string) => Promise<void>;
@@ -25,23 +25,7 @@ export const useCartStore = create<CartState>()(
         carts: [],
         isLoading: false,
 
-        fetchCart: async (userId: string) => {
-          try {
-            set({ isLoading: true });
-            const response = await cartApi.getCart(userId);
-
-            if (response.cart) {
-              set({ carts: [response.cart] });
-            } else {
-              set({ carts: [] });
-            }
-          } catch (error: any) {
-            console.error('Error fetching cart:', error);
-            toast.error('Không thể tải giỏ hàng');
-          } finally {
-            set({ isLoading: false });
-          }
-        },
+        setCarts: (carts: Cart[]) => set({ carts }),
 
         addToCart: async (userId: string, productId: string, quantity = 1) => {
           // React 19 optimistic updates sẽ handle UI updates
@@ -56,7 +40,6 @@ export const useCartStore = create<CartState>()(
         },
 
         updateCartItem: async (userId: string, itemId: string, quantity: number) => {
-          // Optimistic updates đã được handle ở component level
           const response = await cartApi.updateCartItem({ itemId, quantity, userId });
 
           if (response.cart) {
@@ -67,7 +50,6 @@ export const useCartStore = create<CartState>()(
         },
 
         removeCartItem: async (userId: string, itemId: string) => {
-          // Optimistic updates đã được handle ở component level
           await cartApi.removeCartItem(itemId, userId);
 
           // Fetch lại để đảm bảo consistency
@@ -82,7 +64,6 @@ export const useCartStore = create<CartState>()(
         },
 
         checkoutItem: async (userId: string, itemId: string) => {
-          // Optimistic updates đã được handle ở component level
           const response = await cartApi.checkoutSingleItem(itemId, userId);
 
           // Fetch lại để đảm bảo consistency

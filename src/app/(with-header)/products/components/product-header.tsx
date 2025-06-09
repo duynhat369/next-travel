@@ -44,10 +44,14 @@ export function ProductHeader({ lengthResult, isLoading }: Props) {
   // Get category label
   const getCategoryLabel = (value: string) => {
     switch (value) {
-      case 'camping-gear':
+      case 'camping':
         return 'Cắm trại';
       case 'souvenir':
         return 'Đồ lưu niệm';
+      case 'motor':
+        return 'Xe máy';
+      case 'clothing':
+        return 'Thời trang';
       default:
         return value;
     }

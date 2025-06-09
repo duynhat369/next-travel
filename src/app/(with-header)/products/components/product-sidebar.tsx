@@ -15,8 +15,8 @@ export const categories = [
   { id: 'all', label: 'Tất cả', value: null },
   { id: 'camping', label: 'Cắm trại', value: 'camping' },
   { id: 'souvenir', label: 'Đồ lưu niệm', value: 'souvenir' },
-  { id: 'motor', label: 'Đồ xe máy', value: 'motor' },
-  { id: 'clothing', label: 'Quần áo', value: 'clothing' },
+  { id: 'motor', label: 'Xe máy', value: 'motor' },
+  { id: 'clothing', label: 'Thời trang', value: 'clothing' },
 ];
 
 const priceRanges = [

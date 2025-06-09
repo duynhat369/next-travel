@@ -3,19 +3,20 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cartApi } from '@/lib/api/cart';
+import { useCartStore } from '@/store/cart-store';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Calendar, ShoppingCart } from 'lucide-react';
-import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import { BookingContent } from './booking/booking-content';
 import { CartContent } from './cart/cart-content';
 
 export const UserTabs = () => {
-  const params = useParams();
-
-  const { userId } = params;
+  const { data: session } = useSession();
+  const { id: userId } = session?.user || {};
   const [activeTab, setActiveTab] = useState('cart');
+  const { setCarts } = useCartStore();
 
   // Fetch cart data using React Query
   const { data: cartData, error } = useQuery({
@@ -23,6 +24,14 @@ export const UserTabs = () => {
     queryFn: () => cartApi.getCart((userId as string) || ''),
     enabled: activeTab === 'cart', // Only fetch when cart tab is active
   });
+  // setCarts(cartData?.cart ? [cartData.cart] : []);
+  useEffect(() => {
+    if (cartData?.cart) {
+      setCarts([cartData.cart]);
+    } else {
+      setCarts([]);
+    }
+  }, [cartData, setCarts]);
 
   return (
     <motion.div
@@ -45,11 +54,9 @@ export const UserTabs = () => {
                   >
                     <ShoppingCart className="w-5 h-5" />
                     Giỏ hàng
-                    {cartData?.cart?.totalItems ? (
-                      <span className="bg-primary text-white text-xs rounded-full px-2 py-0.5 ml-1">
-                        {cartData.cart.totalItems}
-                      </span>
-                    ) : null}
+                    <span className="bg-primary text-white text-xs rounded-full px-2 py-0.5 ml-1">
+                      {cartData?.cart.totalItems}
+                    </span>
                   </motion.div>
                 </TabsTrigger>
                 <TabsTrigger
