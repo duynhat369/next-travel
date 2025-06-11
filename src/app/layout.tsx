@@ -14,6 +14,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Latata Travel',
   description: 'Latata Travel - Bên bạn mọi cung đường',
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({

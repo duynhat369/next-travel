@@ -38,10 +38,6 @@ export default function TourDetailPage() {
 
   const { slug } = params;
 
-  if (slug === 'undefined') {
-    return notFound();
-  }
-
   const {
     register: bookingRegister,
     handleSubmit: handleSubmitBooking,
@@ -66,6 +62,10 @@ export default function TourDetailPage() {
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
   const { tour } = tourResponse || {};
+
+  if (slug === 'undefined' || !tourResponse) {
+    return notFound();
+  }
 
   const { mutate: createBooking } = useMutation({
     mutationFn: bookingApi.createBooking,
