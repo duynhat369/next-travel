@@ -3,13 +3,16 @@ import mongoose from 'mongoose';
 import { type NextRequest, NextResponse } from 'next/server';
 import { calculateCartTotals, getCartModel } from '../route';
 
-export async function PUT(request: NextRequest, { params }: { params: { itemId: string } }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ itemId: string }> }
+) {
   try {
     await connectToDatabase();
     const Cart = getCartModel();
 
     const { quantity, userId } = await request.json();
-    const { itemId } = params;
+    const { itemId } = await params;
 
     // Validation
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
@@ -79,12 +82,15 @@ export async function PUT(request: NextRequest, { params }: { params: { itemId: 
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { itemId: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ itemId: string }> }
+) {
   try {
     await connectToDatabase();
     const Cart = getCartModel();
 
-    const { itemId } = params;
+    const { itemId } = await params;
     const userId = request.nextUrl.searchParams.get('userId');
 
     // Validation
