@@ -57,9 +57,10 @@ export default function TourDetailPage() {
   const quantityWatch = watch('quantity');
 
   const { data: tourResponse, isLoading } = useQuery({
-    queryKey: ['tour', slug],
+    queryKey: ['tourBySlug', slug],
     queryFn: async () => tourApi.getTourBySlug(slug as string),
     staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: !!slug && slug !== 'undefined',
   });
   const { tour } = tourResponse || {};
 
@@ -74,10 +75,6 @@ export default function TourDetailPage() {
       });
     },
   });
-
-  if (slug === 'undefined' || !tourResponse) {
-    return notFound();
-  }
 
   const handleSubmit = async (data: BookingFormValues) => {
     if (!session?.user?.id) {
@@ -107,6 +104,10 @@ export default function TourDetailPage() {
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
+  }
+
+  if (slug === 'undefined' || !tourResponse) {
+    return notFound();
   }
 
   return (
