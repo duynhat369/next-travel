@@ -4,11 +4,14 @@ import mongoose from 'mongoose';
 import { type NextRequest, NextResponse } from 'next/server';
 
 // API PUT - Cập nhật thông tin user
-export async function PUT(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ userId: string }> }
+) {
   try {
     await connectToDatabase();
 
-    const { userId } = params;
+    const { userId } = await params;
     const body = await request.json();
     const { email, phoneNumber } = body;
 
@@ -49,11 +52,14 @@ export async function PUT(request: NextRequest, { params }: { params: { userId: 
 }
 
 // API GET - Lấy thông tin user
-export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ userId: string }> }
+) {
   try {
     await connectToDatabase();
 
-    const { userId } = params;
+    const { userId } = await params;
 
     // Validation
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {

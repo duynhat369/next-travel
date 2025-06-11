@@ -1,7 +1,7 @@
 import { connectToDatabase } from '@/lib/db/mongodb';
+import { getProductModel } from '@/lib/schemas/product';
 import mongoose from 'mongoose';
 import { type NextRequest, NextResponse } from 'next/server';
-import { getProductModel } from '../route';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

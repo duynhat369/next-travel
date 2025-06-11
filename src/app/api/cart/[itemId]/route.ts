@@ -1,7 +1,7 @@
 import { connectToDatabase } from '@/lib/db/mongodb';
+import { calculateCartTotals, getCartModel } from '@/lib/schemas/cart';
 import mongoose from 'mongoose';
 import { type NextRequest, NextResponse } from 'next/server';
-import { calculateCartTotals, getCartModel } from '../route';
 
 export async function PUT(
   request: NextRequest,

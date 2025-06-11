@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { Suspense } from 'react';
 import './globals.css';
 import { Providers } from './providers';
 
@@ -27,17 +28,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} antialiased`}>
-        <NuqsAdapter>
-          <NextTopLoader
-            showSpinner={false}
-            color="#ea4b00"
-            shadow="0 0 10px #ea4b00,0 0 5px #ea4b00"
-          />
-          <Providers>
-            <Toaster />
-            {children}
-          </Providers>
-        </NuqsAdapter>
+        <Suspense>
+          <NuqsAdapter>
+            <NextTopLoader
+              showSpinner={false}
+              color="#ea4b00"
+              shadow="0 0 10px #ea4b00,0 0 5px #ea4b00"
+            />
+            <Providers>
+              <Toaster />
+              {children}
+            </Providers>
+          </NuqsAdapter>
+        </Suspense>
       </body>
     </html>
   );

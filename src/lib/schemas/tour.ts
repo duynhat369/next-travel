@@ -1,4 +1,39 @@
+import { Tour } from '@/types/tour.types';
+import mongoose from 'mongoose';
 import { z } from 'zod';
+
+const tourSchema = new mongoose.Schema<Tour>(
+  {
+    title: { type: String, required: true },
+    slug: {
+      type: String,
+      unique: true,
+      required: true,
+      lowercase: true,
+    },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    originalPrice: { type: Number, required: true },
+    discountPercentage: { type: Number, required: true },
+    thumbnail: { type: String, required: true },
+    isHot: { type: Boolean, default: false },
+    itinerary: { type: String },
+    whatToBring: { type: [String] },
+    guides: [
+      {
+        name: String,
+        avatar: String,
+        bio: String,
+      },
+    ],
+    gallery: { type: [String] },
+  },
+  { timestamps: true }
+);
+
+export function getTourModel() {
+  return mongoose.models.Tour || mongoose.model<Tour>('Tour', tourSchema);
+}
 
 export const bookingSchema = z.object({
   quantity: z

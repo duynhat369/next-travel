@@ -1,13 +1,13 @@
-import { getTourModel } from '@/app/api/tours/route';
 import { connectToDatabase } from '@/lib/db/mongodb';
+import { getTourModel } from '@/lib/schemas/tour';
 import mongoose from 'mongoose';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
     await connectToDatabase();
     const Tour = getTourModel();
-    const slug = params.slug;
+    const { slug } = await params;
 
     // Tìm tour theo ID nếu slug là ObjectId hợp lệ
     let tour;

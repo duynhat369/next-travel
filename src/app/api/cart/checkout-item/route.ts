@@ -1,9 +1,9 @@
 // /api/cart/checkout-item/route.ts - API thanh toán từng sản phẩm
 import { connectToDatabase } from '@/lib/db/mongodb';
+import { calculateCartTotals, getCartModel } from '@/lib/schemas/cart';
 import { CartItem } from '@/types/cart.types';
 import mongoose from 'mongoose';
 import { type NextRequest, NextResponse } from 'next/server';
-import { calculateCartTotals, getCartModel } from '../route';
 
 export async function POST(request: NextRequest) {
   try {
