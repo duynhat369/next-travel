@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/ui/card';
 import { useCountUp } from '@/hooks';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FlagTriangleRight, Heart, Plane, Users } from 'lucide-react';
 import { useRef } from 'react';
 
@@ -24,7 +24,7 @@ const FactCard = ({
   icon: React.ReactNode;
   suffix?: string;
 }) => {
-  const count = useCountUp(value, true); // dùng `inView` nếu cần
+  const count = useCountUp(value, true);
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -45,7 +45,6 @@ const FactCard = ({
 
 export const FunFacts = () => {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-20% 0px' });
 
   return (
     <section
