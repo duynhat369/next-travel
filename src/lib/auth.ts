@@ -34,6 +34,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           displayName: user.displayName,
           avatar: user.avatar,
+          phoneNumber: user?.phoneNumber || '',
         };
       },
     }),
@@ -47,6 +48,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: profile.email,
           displayName: profile.name,
           avatar: profile.picture,
+          phoneNumber: profile?.phoneNumber || '',
           provider: 'google',
         };
       },
