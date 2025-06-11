@@ -41,7 +41,7 @@ export default function TourDetailPage() {
   const {
     register: bookingRegister,
     handleSubmit: handleSubmitBooking,
-    formState: { errors: bookingErrors, isSubmitting: isLoginSubmitting },
+    formState: { errors: bookingErrors },
     watch,
   } = useForm<BookingFormValues>({
     resolver: zodResolver(bookingSchema),
@@ -63,22 +63,21 @@ export default function TourDetailPage() {
   });
   const { tour } = tourResponse || {};
 
-  if (slug === 'undefined' || !tourResponse) {
-    return notFound();
-  }
-
   const { mutate: createBooking } = useMutation({
     mutationFn: bookingApi.createBooking,
-    onSuccess: (data, variables) => {
+    onSuccess: () => {
       setShowConfirmation(true);
-      // reset();
     },
-    onError: (error: unknown) => {
+    onError: () => {
       toast('Yêu cầu không thành công', {
         description: 'Có lỗi xảy ra',
       });
     },
   });
+
+  if (slug === 'undefined' || !tourResponse) {
+    return notFound();
+  }
 
   const handleSubmit = async (data: BookingFormValues) => {
     if (!session?.user?.id) {

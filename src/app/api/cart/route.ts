@@ -1,4 +1,3 @@
-// /api/cart/route.ts - Thêm PUT và DELETE methods
 import { connectToDatabase } from '@/lib/db/mongodb';
 import type { Cart, CartItem } from '@/types/cart.types';
 import mongoose from 'mongoose';
@@ -100,6 +99,7 @@ export async function GET(request: NextRequest) {
 
     // Sắp xếp items trong cart: pending trước, done/cancelled sau
     if (cart.items && cart.items.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       cart.items.sort((a: any, b: any) => {
         // Ưu tiên pending lên trước
         if (a.status === 'pending' && b.status !== 'pending') return -1;
@@ -177,6 +177,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Kiểm tra sản phẩm đã có trong giỏ chưa
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const existingItemIndex = cart.items.findIndex(
       (item: any) => item.productId.toString() === productId
     );
@@ -272,6 +273,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Tìm item trong giỏ hàng
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const itemIndex = cart.items.findIndex((item: any) => item._id.toString() === itemId);
 
     if (itemIndex === -1) {
@@ -354,6 +356,7 @@ export async function DELETE(request: NextRequest) {
 
     // Tìm và xóa item khỏi giỏ hàng
     const originalLength = cart.items.length;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     cart.items = cart.items.filter((item: any) => item._id.toString() !== itemId);
 
     if (cart.items.length === originalLength) {

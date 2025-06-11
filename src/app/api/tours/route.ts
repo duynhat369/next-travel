@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
     const isHot = searchParams.get('isHot') === 'true';
     const hasDiscount = searchParams.get('hasDiscount') === 'true';
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const filter: any = {};
 
     // Search by title
@@ -71,6 +72,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build sort object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sort: any = {};
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;

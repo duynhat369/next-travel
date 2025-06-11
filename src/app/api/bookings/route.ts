@@ -3,13 +3,11 @@ import getBookingModel from '@/lib/models/Booking';
 import User from '@/lib/models/User';
 import mongoose from 'mongoose';
 import { NextRequest, NextResponse } from 'next/server';
-import { getTourModel } from '../tours/route';
 
 export async function GET(request: NextRequest) {
   try {
     await connectToDatabase();
     const Booking = getBookingModel();
-    const Tour = getTourModel();
 
     const userId = request.nextUrl.searchParams.get('userId');
 

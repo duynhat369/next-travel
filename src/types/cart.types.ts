@@ -1,5 +1,6 @@
 export interface CartItem {
   _id?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   productId: string | any;
   quantity: number;
   price: number;

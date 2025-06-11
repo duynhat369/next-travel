@@ -20,13 +20,8 @@ export interface PaginationProps {
   maxVisiblePages?: number;
 }
 
-export function Pagination({
-  pagination,
-  onPageChange,
-  showInfo = true,
-  maxVisiblePages = 5,
-}: PaginationProps) {
-  const { currentPage, totalPages, total, limit, hasNext, hasPrev } = pagination;
+export function Pagination({ pagination, onPageChange, maxVisiblePages = 5 }: PaginationProps) {
+  const { currentPage, totalPages, hasNext, hasPrev } = pagination;
 
   // Generate page numbers to show
   const getVisiblePages = () => {

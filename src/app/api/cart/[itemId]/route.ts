@@ -35,6 +35,7 @@ export async function PUT(request: NextRequest, { params }: { params: { itemId: 
     }
 
     // Tìm item trong giỏ hàng
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const itemIndex = cart.items.findIndex((item: any) => item._id.toString() === itemId);
 
     if (itemIndex === -1) {
@@ -106,6 +107,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { itemI
     }
 
     // Tìm và xóa item
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const itemIndex = cart.items.findIndex((item: any) => item._id.toString() === itemId);
 
     if (itemIndex === -1) {

@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 import mongoose from 'mongoose';
 
 // Định nghĩa interface cho cấu trúc cache
@@ -30,7 +31,7 @@ const options: mongoose.ConnectOptions = {
 };
 
 // Khởi tạo cache
-let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
+const cached: MongooseCache = global.mongoose || { conn: null, promise: null };
 
 // Lưu cache vào biến global
 if (!global.mongoose) {

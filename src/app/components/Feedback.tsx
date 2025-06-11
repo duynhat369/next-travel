@@ -230,7 +230,7 @@ export const Feedback = () => {
             className="flex flex-col gap-4 items-center mt-4 text-center"
           >
             <blockquote className="text-base italic leading-relaxed md:max-w-[500px]">
-              "{selectedUser.description}"
+              &quot;{selectedUser.description}&quot;
             </blockquote>
             <div className="relative w-full max-w-[300px] max-h-[300px] aspect-square">
               <Image

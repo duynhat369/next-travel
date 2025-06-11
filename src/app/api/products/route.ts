@@ -69,6 +69,7 @@ export async function GET(request: NextRequest) {
     const limited = searchParams.get('limited') === 'true';
 
     // Build filter object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const filter: any = {};
 
     // Search by name and description
@@ -108,6 +109,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build sort object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sort: any = {};
     if (sortBy) {
       // only allowed sort by price

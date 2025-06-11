@@ -56,15 +56,16 @@ export const UserDetail = ({ user, isEditingPhone, onEditPhone, onCancel, onSucc
         phoneNumber: data.phoneNumber || '',
       });
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate và refetch
       queryClient.invalidateQueries({ queryKey: ['user', user._id] });
       toast.success('Cập nhật số điện thoại thành công');
       onSuccess();
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast.error('Cập nhật thất bại', {
-        description: error.message || 'Có lỗi xảy ra khi cập nhật số điện thoại',
+        description:
+          error instanceof Error ? error.message : 'Có lỗi xảy ra khi cập nhật số điện thoại',
       });
     },
   });

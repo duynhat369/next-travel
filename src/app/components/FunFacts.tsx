@@ -13,6 +13,36 @@ const FACTS = [
   { icon: <FlagTriangleRight className="w-8 h-8 text-white" />, value: 20, label: 'Địa điểm' },
 ];
 
+const FactCard = ({
+  value,
+  label,
+  icon,
+  suffix = '+',
+}: {
+  value: number;
+  label: string;
+  icon: React.ReactNode;
+  suffix?: string;
+}) => {
+  const count = useCountUp(value, true); // dùng `inView` nếu cần
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, ease: 'easeOut' }}
+    >
+      <Card className="flex flex-col items-center text-center p-6 shadow-md rounded-2xl border-none bg-foreground">
+        <div className="text-2xl font-bold text-white">
+          {count}
+          {suffix}
+        </div>
+        <div className="text-base text-white">{label}</div>
+        <div>{icon}</div>
+      </Card>
+    </motion.div>
+  );
+};
+
 export const FunFacts = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-20% 0px' });
@@ -48,26 +78,9 @@ export const FunFacts = () => {
           </motion.p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {FACTS.map((item, index) => {
-            const count = useCountUp(item.value, inView);
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 40 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 1, delay: index * 0.15, ease: 'easeOut' }}
-              >
-                <Card className="flex flex-col items-center text-center p-6 shadow-md rounded-2xl border-none bg-foreground">
-                  <div className="text-2xl font-bold text-white">
-                    {count}
-                    {item.suffix || '+'}
-                  </div>
-                  <div className="text-base text-white">{item.label}</div>
-                  <div>{item.icon}</div>
-                </Card>
-              </motion.div>
-            );
-          })}
+          {FACTS.map((item, index) => (
+            <FactCard key={index} {...item} />
+          ))}
         </div>
       </div>
     </section>

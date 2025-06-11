@@ -167,6 +167,7 @@ export function AuthModal() {
     try {
       await signIn('google', { callbackUrl: '/' });
     } catch (error) {
+      console.error('Error:', error);
       toast('Đăng nhập thất bại', {
         description: 'Có lỗi xảy ra khi đăng nhập với Google',
       });

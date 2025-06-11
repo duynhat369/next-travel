@@ -18,6 +18,7 @@ export interface Booking {
   numberOfParticipants: number;
   phoneNumber: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   statusHistory: any[];
   participants?: any[];
   user?: {
@@ -50,6 +51,7 @@ export interface BookingValues {
   tourEndDate?: Date;
 }
 export interface BookingResponse {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   success: boolean;
 }

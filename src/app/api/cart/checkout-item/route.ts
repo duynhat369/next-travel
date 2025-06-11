@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
     cart.items[itemIndex].status = 'done';
 
     // Tính toán lại tổng (chỉ tính các item pending)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pendingItems = cart.items.filter((item: any) => item.status === 'pending');
     const { totalItems, totalAmount } = calculateCartTotals(pendingItems);
     cart.totalItems = totalItems;

@@ -1,15 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
-import type React from 'react';
 
 import Image from 'next/image';
-
-interface Equipment {
-  icon: React.ReactNode;
-  name: string;
-  description: string;
-  color: string;
-}
 
 interface TeamMember {
   id: number;

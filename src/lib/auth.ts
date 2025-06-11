@@ -59,8 +59,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: '/',
   },
   callbacks: {
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user }) {
       if (user) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         token.id = (user as any)._id?.toString() || user.id;
         token.username = user.username;
         token.displayName = user.displayName;

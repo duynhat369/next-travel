@@ -4,24 +4,28 @@ import type { CartResponse } from '@/types/cart.types';
 import axiosClient from '../axios';
 
 export interface AddToCartResponse {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cart: any;
   success: boolean;
   message: string;
 }
 
 export interface UpdateCartItemResponse {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cart: any;
   success: boolean;
   message: string;
 }
 
 export interface RemoveCartItemResponse {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cart: any;
   success: boolean;
   message: string;
 }
 
 export interface CheckoutItemResponse {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cart: any;
   paidItem: any;
   success: boolean;
@@ -68,6 +72,7 @@ export const cartApi = {
 // Các utility functions để xử lý cart data
 export const cartUtils = {
   // Tính tổng tiền cho những item có status cụ thể
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   calculateTotalByStatus: (items: any[], status: string) => {
     return items
       .filter((item) => item.status === status)
@@ -75,6 +80,7 @@ export const cartUtils = {
   },
 
   // Đếm số lượng item theo status
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   countItemsByStatus: (items: any[], status: string) => {
     return items
       .filter((item) => item.status === status)
@@ -82,6 +88,7 @@ export const cartUtils = {
   },
 
   // Lấy danh sách item theo status
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemsByStatus: (items: any[], status: string) => {
     return items.filter((item) => item.status === status);
   },

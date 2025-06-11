@@ -10,11 +10,6 @@ interface Props {
   user?: UserDB;
 }
 
-interface FormData {
-  email: string;
-  phoneNumber: string;
-}
-
 export const UserInformation = ({ user }: Props) => {
   const [isEditingPhone, setIsEditingPhone] = useState(false);
 

@@ -157,7 +157,7 @@ export default function TourHeader({ lengthResult, isLoading }: Props) {
 
       {!isLoading && debouncedValue ? (
         <p className="mt-3 text-foreground-secondary">
-          Đang hiển thị {lengthResult} kết quả cho phần tìm kiếm "{debouncedValue}"
+          Đang hiển thị {lengthResult} kết quả cho phần tìm kiếm &quot;{debouncedValue}&quot;
         </p>
       ) : null}
     </div>
