@@ -17,8 +17,8 @@ interface SeasonData {
 const seasonsData: SeasonData[] = [
   {
     id: 1,
-    season: 'LATATA Xuân',
-    seasonSub: 'Khởi đầu mới',
+    season: 'Khởi đầu mới',
+    seasonSub: 'LATATA mùa Xuân',
     description:
       'Cùng với LATATA khám phá mùa Xuân Việt Nam với những chuyến đi đầy màu sắc và thú vị. Từ những cánh đồng hoa rực rỡ đến những khu rừng xanh mát, bạn sẽ được trải nghiệm vẻ đẹp của thiên nhiên và văn hóa Việt Nam trong mùa Xuân. Hãy cùng chúng tôi khám phá những điểm đến tuyệt vời và tạo nên những kỷ niệm đáng nhớ trong hành trình của bạn.',
     icon: <Leaf className="w-6 h-6" />,
@@ -27,8 +27,8 @@ const seasonsData: SeasonData[] = [
   },
   {
     id: 2,
-    season: 'LATATA Hạ',
-    seasonSub: 'Hành trình bất tận',
+    season: 'Hành trình bất tận',
+    seasonSub: 'LATATA mùa Hạ',
     description:
       'Hành trình khám phá bất tận bắt đầu từ những ngày cuối mùa xuân và đầu mùa hạ. Từ đây bạn sẽ được trải nghiệm những chuyến đi đầy thú vị, những khoảnh khắc đáng nhớ và những kỷ niệm không thể nào quên. Với LATATA, bạn sẽ được trải nghiệm những chuyến đi đầy màu sắc và thú vị, từ những bãi biển xanh mát đến những cánh đồng hoa rực rỡ.',
     icon: <Sun className="w-6 h-6" />,
@@ -37,8 +37,8 @@ const seasonsData: SeasonData[] = [
   },
   {
     id: 3,
-    season: 'LATATA Thu',
-    seasonSub: 'Tận hưởng',
+    season: 'Tận hưởng',
+    seasonSub: 'LATATA mùa Thu',
     description:
       'Còn gì hơn một mùa thu lãng mạn? Câu trả lời chính xác là tận hưởng mùa Thu cùng với LATATA, nơi bạn có thể trải nghiệm những chuyến đi đầy thú vị và những khoảnh khắc đáng nhớ. Với đội ngũ chuyên nghiệp, chúng tôi cam kết mang đến cho bạn những trải nghiệm tuyệt vời nhất trong mùa Thu này.',
     icon: <MapPin className="w-6 h-6" />,
@@ -47,8 +47,8 @@ const seasonsData: SeasonData[] = [
   },
   {
     id: 4,
-    season: 'LATATA Đông',
-    seasonSub: 'Cảm nhận',
+    season: 'Cảm nhận',
+    seasonSub: 'LATATA mùa Đông',
     description:
       'Mùa Đông là thời điểm tuyệt vời để cảm nhận vẻ đẹp của thiên nhiên và văn hóa Việt Nam. Với LATATA, bạn sẽ được trải nghiệm những chuyến đi đầy thú vị và những khoảnh khắc đáng nhớ trong mùa Đông này. Từ những cánh đồng hoa rực rỡ đến những khu rừng xanh mát, bạn sẽ được khám phá vẻ đẹp của thiên nhiên và văn hóa Việt Nam trong mùa Đông.',
     icon: <Snowflake className="w-6 h-6" />,
@@ -59,7 +59,7 @@ const seasonsData: SeasonData[] = [
 
 export const Seasons = () => {
   return (
-    <section className=" mt-20 md:mt-24 bg-white">
+    <section className="mt-20 md:mt-24 bg-white">
       <div className="container mx-auto px-4">
         {/* Section Title */}
         <motion.div

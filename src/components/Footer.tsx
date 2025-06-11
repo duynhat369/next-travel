@@ -1,3 +1,4 @@
+import { ABOUT_US_PAGE, CONTACT_PAGE } from '@/constants';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,8 +11,8 @@ export const Footer = () => {
       <div className="container mx-auto px-4 py-12 text-white">
         <div className="flex flex-col gap-8 md:flex-row">
           <div className="flex-1">
-            <div className="relative w-12 h-12 rounded-full overflow-hidden mb-2">
-              <Image src="/placeholder.png" alt="logo" fill className="w-12 h-12" />
+            <div className="relative mb-2">
+              <Image src="/logo.png" alt="logo" width={80} height={32} className="w-20 h-8" />
             </div>
             <div className="w-full flex flex-col items-start justify-center gap-4">
               <p className="">Hot line: 0815567712</p>
@@ -29,13 +30,13 @@ export const Footer = () => {
               </h3>
               <div className="w-full flex flex-col items-start justify-center gap-4">
                 <Link
-                  href="#"
+                  href={`/${CONTACT_PAGE}#FAQs`}
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
                   FAQs
                 </Link>
                 <Link
-                  href="#"
+                  href={`/${ABOUT_US_PAGE}`}
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
                   Về chúng tôi
@@ -49,52 +50,44 @@ export const Footer = () => {
               </div>
             </div>
             <div className="w-full">
-              <h3 className="relative text-md md:text-xl text-primary font-bold mb-2">
-                Chính sách
-              </h3>
+              <h3 className="relative text-md md:text-xl text-primary font-bold mb-2">Sản phẩm</h3>
               <div className="w-full flex flex-col items-start justify-center gap-4">
                 <Link
                   href="#"
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
-                  FAQs
+                  Đồ lưu niệm
                 </Link>
                 <Link
                   href="#"
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
-                  Về chúng tôi
+                  Đồ xe máy
                 </Link>
                 <Link
                   href="#"
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
-                  Quy định
+                  Đồ handmade
                 </Link>
               </div>
             </div>
             <div className="w-full">
               <h3 className="relative text-md md:text-xl text-primary font-bold mb-2">
-                Chính sách
+                Thông tin khác
               </h3>
               <div className="w-full flex flex-col items-start justify-center gap-4">
                 <Link
                   href="#"
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
-                  FAQs
+                  Cộng đồng camping
                 </Link>
                 <Link
                   href="#"
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
-                  Về chúng tôi
-                </Link>
-                <Link
-                  href="#"
-                  className="text-muted-foreground text-xs md:text-sm hover:text-white"
-                >
-                  Quy định
+                  Travel blog
                 </Link>
               </div>
             </div>

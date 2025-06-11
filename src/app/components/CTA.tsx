@@ -1,5 +1,5 @@
 'use client';
-import { TOURS_PAGE } from '@/constants';
+import { CONTACT_PAGE, TOURS_PAGE } from '@/constants';
 import { motion } from 'framer-motion';
 import { Compass, Phone } from 'lucide-react';
 import Link from 'next/link';
@@ -63,7 +63,7 @@ export const CTA = () => {
 
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
-              href={`#`}
+              href={`/${CONTACT_PAGE}`}
               className="inline-flex items-center justify-center mt-4 bg-foreground border text-white px-3 py-2 rounded-md hover:bg-foreground/90 transition-colors"
             >
               <motion.div

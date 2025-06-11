@@ -4,6 +4,7 @@ import { Feedback } from '../components/Feedback';
 import { FunFacts } from '../components/FunFacts';
 import { Timeline } from '../components/Timeline';
 import { WhatMakesTripGreat } from '../components/WhatMakesTripGreat';
+import { Seasons } from './about-us/components/Seasons';
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
         <Timeline />
         <WhatMakesTripGreat />
         <CTA />
+        <Seasons />
         <Feedback />
       </div>
     </>

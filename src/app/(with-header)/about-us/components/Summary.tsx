@@ -86,9 +86,9 @@ export const SummarySection = () => {
                 viewport={{ once: true }}
                 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight"
               >
-                Khám Phá Bản Đồ
+                Đam mê khám phá
                 <br />
-                <span className="text-primary">Hình Chữ S</span>
+                <span className="text-primary">Hình chữ S</span>
               </motion.h2>
             </div>
 

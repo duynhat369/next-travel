@@ -1,7 +1,7 @@
 'use client';
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { ABOUT_US_PAGE, PRODUCTS_PAGE, TOURS_PAGE } from '@/constants';
+import { ABOUT_US_PAGE, CONTACT_PAGE, PRODUCTS_PAGE, TOURS_PAGE } from '@/constants';
 import { cn } from '@/lib/utils';
 import { LogOut, Menu, User } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
@@ -40,14 +40,10 @@ export const Header = () => {
     <header className="fixed top-0 right-0 left-0 z-50 px-4 pt-4 sm:pt-6">
       <div className="max-w-[1024px] mx-auto flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3 bg-white backdrop-blur-md rounded-full shadow-sm">
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center space-x-2 font-semibold text-lg text-foreground"
-        >
-          <div className="bg-foreground text-white w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full font-bold">
-            L
+        <Link href="/" className="flex items-center">
+          <div className="relative">
+            <Image src="/logo.png" alt="Logo" width={80} height={32} />
           </div>
-          <span>Latata</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -58,7 +54,7 @@ export const Header = () => {
                 href={item.href}
                 target={item.openInNewTab ? '_blank' : '_self'}
                 className={cn(
-                  'hover:text-secondary transition-colors',
+                  'hover:text-primary transition-colors',
                   pathname === item.href && 'font-bold text-primary'
                 )}
               >
@@ -111,7 +107,7 @@ export const Header = () => {
             <AuthModal />
           )}
           <Link
-            href="#"
+            href={`/${CONTACT_PAGE}`}
             className="text-white bg-foreground border border-foreground px-3 py-2 rounded-full hover:bg-foreground-secondary transition-colors"
           >
             Liên hệ
@@ -131,11 +127,10 @@ export const Header = () => {
               <div className="flex flex-col h-full">
                 <SheetHeader className="px-4 py-6">
                   <SheetTitle className="text-left">
-                    <Link href="/" className="flex items-center gap-2">
-                      <div className="bg-foreground text-white w-8 h-8 flex items-center justify-center rounded-full font-bold">
-                        L
+                    <Link href="/" className="flex items-center">
+                      <div className="relative">
+                        <Image src="/logo.png" alt="Logo" width={80} height={32} />
                       </div>
-                      <span>Latata</span>
                     </Link>
                   </SheetTitle>
                 </SheetHeader>
@@ -203,7 +198,7 @@ export const Header = () => {
                 {/* Contact Button (Mobile) */}
                 <div className="mt-auto p-4">
                   <Link
-                    href="#"
+                    href={`/${CONTACT_PAGE}`}
                     className="block text-white text-center bg-foreground px-4 py-3 rounded-full hover:bg-foreground-secondary transition-colors w-full"
                   >
                     Liên hệ
