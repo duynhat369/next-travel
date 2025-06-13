@@ -1,4 +1,4 @@
-import { ABOUT_US_PAGE, CONTACT_PAGE } from '@/constants';
+import { ABOUT_US_PAGE, CONTACT_PAGE, PRODUCTS_PAGE } from '@/constants';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -53,22 +53,28 @@ export const Footer = () => {
               <h3 className="relative text-md md:text-xl text-primary font-bold mb-2">Sản phẩm</h3>
               <div className="w-full flex flex-col items-start justify-center gap-4">
                 <Link
-                  href="#"
+                  href={`/${PRODUCTS_PAGE}`}
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
                   Đồ lưu niệm
                 </Link>
                 <Link
-                  href="#"
+                  href={`/${PRODUCTS_PAGE}`}
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
                   Đồ xe máy
                 </Link>
                 <Link
-                  href="#"
+                  href={`/${PRODUCTS_PAGE}`}
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
                   Đồ handmade
+                </Link>
+                <Link
+                  href={`/${PRODUCTS_PAGE}`}
+                  className="text-muted-foreground text-xs md:text-sm hover:text-white"
+                >
+                  Phụ kiện
                 </Link>
               </div>
             </div>
@@ -78,13 +84,15 @@ export const Footer = () => {
               </h3>
               <div className="w-full flex flex-col items-start justify-center gap-4">
                 <Link
-                  href="#"
+                  href={'https://www.facebook.com/duyNhatDeveloper/'}
+                  target="_blank"
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
                   Cộng đồng camping
                 </Link>
                 <Link
-                  href="#"
+                  href={'https://www.trangcuanhat.com/'}
+                  target="_blank"
                   className="text-muted-foreground text-xs md:text-sm hover:text-white"
                 >
                   Travel blog
@@ -94,7 +102,7 @@ export const Footer = () => {
           </div>
         </div>
         <div className="mt-4 md:mt-8">
-          <p className="font-semibold">Copyright © 2025 Latata travel</p>
+          <p className="font-semibold">Copyright © 2025 Nguyen Duy Nhat</p>
         </div>
       </div>
     </footer>

@@ -66,17 +66,7 @@ export const RegisterForm = ({
             <form id="register-form" onSubmit={onRegisterSubmit} className="space-y-4" noValidate>
               <div className="space-y-2">
                 <Label htmlFor="username" className="flex items-center gap-1.5">
-                  <RequiredLabel>Tên đăng nhập</RequiredLabel>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Chỉ chứa chữ cái và chữ số, 3-30 ký tự</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <RequiredLabel>Thông tin đăng nhập</RequiredLabel>
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -87,6 +77,19 @@ export const RegisterForm = ({
                     maxLength={20}
                     {...registerSignup('username')}
                   />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger
+                        asChild
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      >
+                        <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Chỉ chứa chữ cái và chữ số, 3-30 ký tự</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 {registerErrors.username && (
                   <p className="text-sm text-red-500 flex items-center gap-1">
@@ -97,9 +100,6 @@ export const RegisterForm = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="displayName">
-                  <RequiredLabel>Tên hiển thị</RequiredLabel>
-                </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -117,52 +117,7 @@ export const RegisterForm = ({
                   </p>
                 )}
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="email">
-                  <RequiredLabel>Email</RequiredLabel>
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    className="pl-9"
-                    placeholder="Nhập email"
-                    {...registerSignup('email')}
-                  />
-                </div>
-                {registerErrors.email && (
-                  <p className="text-sm text-red-500 flex items-center gap-1">
-                    <AlertCircle className="h-3.5 w-3.5" />
-                    {registerErrors.email.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phoneNumber">Số điện thoại</Label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="phoneNumber"
-                    className="pl-9"
-                    placeholder="Nhập số điện thoại"
-                    {...registerSignup('phoneNumber')}
-                  />
-                </div>
-                {registerErrors.phoneNumber && (
-                  <p className="text-sm text-red-500 flex items-center gap-1">
-                    <AlertCircle className="h-3.5 w-3.5" />
-                    {registerErrors.phoneNumber.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">
-                  <RequiredLabel>Mật khẩu</RequiredLabel>
-                </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -284,9 +239,6 @@ export const RegisterForm = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">
-                  <RequiredLabel>Xác nhận mật khẩu</RequiredLabel>
-                </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -340,6 +292,46 @@ export const RegisterForm = ({
                   <p className="text-sm text-red-500 flex items-center gap-1">
                     <AlertCircle className="h-3.5 w-3.5" />
                     {registerErrors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">
+                  <RequiredLabel>Thông tin tài khoản</RequiredLabel>
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    className="pl-9"
+                    placeholder="Nhập email"
+                    {...registerSignup('email')}
+                  />
+                </div>
+                {registerErrors.email && (
+                  <p className="text-sm text-red-500 flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    {registerErrors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="phoneNumber"
+                    className="pl-9"
+                    placeholder="Nhập số điện thoại"
+                    {...registerSignup('phoneNumber')}
+                  />
+                </div>
+                {registerErrors.phoneNumber && (
+                  <p className="text-sm text-red-500 flex items-center gap-1">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    {registerErrors.phoneNumber.message}
                   </p>
                 )}
               </div>
