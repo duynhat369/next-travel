@@ -36,7 +36,7 @@ export const Hero = () => {
             transition={{ delay: 0.6, duration: 0.8 }}
           >
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/90 to-primary drop-shadow-2xl">
-              LATALA
+              LATATA
             </span>{' '}
             <span className="text-white drop-shadow-2xl">Việt Nam</span>
           </motion.span>
