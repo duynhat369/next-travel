@@ -188,7 +188,7 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
               <div className="text-sm">
                 <span className="text-foreground-secondary">Mã SP: </span>
                 <span className="font-medium">
-                  {product._id ? `KDW-${product._id.substring(0, 5).toUpperCase()}` : 'KDW-02020'}
+                  {product.productCode ? product.productCode : 'Chưa có mã sản phẩm'}
                 </span>
               </div>
               <div className="text-sm">

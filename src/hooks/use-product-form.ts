@@ -1,30 +1,23 @@
 'use client';
 
+import { productApi } from '@/lib/api/product';
 import { addProductSchema, ProductFormData } from '@/lib/validations/product';
 import { UploadedFile } from '@/types/file';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 const createProduct = async (data: ProductFormData): Promise<any> => {
-  console.log('️🏆️🏆️ data:', data);
-  // const response = await fetch("/api/admin/products", {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify(data),
-  // })
-
-  // if (!response.ok) {
-  //   throw new Error("Failed to create product")
-  // }
-
-  // return response.json()
+  await productApi.addProduct(data);
 };
 
 export function useProductForm() {
+  const router = useRouter();
   const [imageFiles, setImageFiles] = useState<UploadedFile[]>([]);
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const form = useForm<ProductFormData>({
     resolver: zodResolver(addProductSchema),
@@ -49,13 +42,11 @@ export function useProductForm() {
 
   const createProductMutation = useMutation({
     mutationFn: createProduct,
-    onSuccess: (data) => {
-      alert('Sản phẩm đã được thêm thành công!');
-      handleReset();
+    onSuccess: () => {
+      setShowConfirmation(true);
     },
     onError: (error) => {
       console.error('Error creating product:', error);
-      alert('Có lỗi xảy ra khi thêm sản phẩm');
     },
   });
 
@@ -91,14 +82,6 @@ export function useProductForm() {
   }, [imageFiles, thumbnailIndex, form]);
 
   const onSubmit = async (data: ProductFormData) => {
-    if (imageFiles.length === 0) {
-      form.setError('gallery', {
-        type: 'required',
-        message: 'Vui lòng tải lên ít nhất 1 ảnh',
-      });
-      return;
-    }
-
     // Set final values
     data.thumbnail = imageFiles[thumbnailIndex]?.url || imageFiles[0]?.url || '';
     data.gallery = imageFiles.map((file) => file.url).filter(Boolean);
@@ -112,7 +95,13 @@ export function useProductForm() {
     setThumbnailIndex(0);
   };
 
-  console.log('️🏆️🏆️ form:', form.getValues());
+  const goToProductPage = () => {
+    router.push('/products');
+  };
+  const closeModal = () => {
+    setShowConfirmation(false);
+    handleReset();
+  };
 
   return {
     form,
@@ -126,5 +115,9 @@ export function useProductForm() {
     isError: createProductMutation.isError,
     error: createProductMutation.error,
     isSuccess: createProductMutation.isSuccess,
+    showConfirmation,
+    setShowConfirmation,
+    goToProductPage,
+    closeModal,
   };
 }

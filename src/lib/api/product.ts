@@ -1,6 +1,7 @@
 import { ProductDetailResponse, ProductFilters, ProductsResponse } from '@/types/product.types';
 import mongoose from 'mongoose';
 import axiosClient from '../axios';
+import { ProductFormData } from '../validations/product';
 
 export const productApi = {
   getProducts: async (params: ProductFilters = {}): Promise<ProductsResponse> => {
@@ -44,5 +45,8 @@ export const productApi = {
   },
   getProductById: async (id: string | mongoose.Types.ObjectId): Promise<ProductDetailResponse> => {
     return axiosClient.get(`/products/${id}`);
+  },
+  addProduct: async (data: ProductFormData): Promise<ProductDetailResponse> => {
+    return axiosClient.post('/admin/products', data);
   },
 };

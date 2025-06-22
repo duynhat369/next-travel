@@ -46,7 +46,7 @@ export function RichTextEditor({
     'underline',
     'strike',
     'list',
-    'bullet',
+    // 'bullet',
     'indent',
     'color',
     'background',

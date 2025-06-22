@@ -50,7 +50,7 @@ export interface ProductDetailResponse {
   product: Product;
 }
 
-export interface CreateProductRequest {
+export interface AddProductRequest {
   name: string;
   description: string;
   content: string;

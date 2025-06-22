@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const addProductSchema = z.object({
   name: z.string().min(1, 'Nhập tên sản phẩm'),
   description: z.string().min(1, 'Nhập mô tả'),
-  content: z.string().min(1, 'Nhập nội dung chi tiết'),
+  content: z.string().optional(),
   originalPrice: z.number({ message: 'Nhập giá hợp lệ' }).min(0, 'Giá gốc phải lớn hơn 0'),
   price: z.number(),
   discountPercentage: z.number().min(0).max(100, 'Nằm trong khoảng 0 - 100').optional(),

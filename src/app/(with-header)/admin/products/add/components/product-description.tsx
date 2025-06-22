@@ -3,6 +3,7 @@
 import CardWithHeader from '@/components/CardWithHeader';
 import { RichTextEditor } from '@/components/rich-text-editor';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { ProductFormData } from '@/lib/validations/product';
 import { motion } from 'framer-motion';
@@ -40,10 +41,10 @@ export function ProductDescription({ control }: ProductDescriptionProps) {
           name="content"
           render={({ field }) => (
             <FormItem>
-              <RequiredFormLabel>Chi tiết sản phẩm</RequiredFormLabel>
+              <Label>Chi tiết sản phẩm</Label>
               <FormControl>
                 <RichTextEditor
-                  value={field.value}
+                  value={field?.value ?? ''}
                   onChange={field.onChange}
                   placeholder="Nhập nội dung chi tiết về sản phẩm..."
                   height="300px"

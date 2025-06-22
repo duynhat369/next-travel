@@ -56,6 +56,7 @@ export function ProductInfo({ form, categoryOptions, tagOptions }: ProductInfoPr
             <RequiredFormLabel>Danh mục</RequiredFormLabel>
             <FormControl>
               <MultiSelect
+                {...field}
                 options={categoryOptions}
                 value={field.value}
                 onChange={field.onChange}

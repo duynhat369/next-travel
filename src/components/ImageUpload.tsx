@@ -4,9 +4,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import axiosClient from '@/lib/axios';
+import { useUploadAuth } from '@/hooks/use-upload-auth';
 import { UploadedFile } from '@/types/file';
-import { UploadAuthResponse } from '@/types/upload-auth';
 import {
   ImageKitAbortError,
   ImageKitInvalidRequestError,
@@ -42,6 +41,7 @@ export function ImageUpload({
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string>('');
+  const { authenticate } = useUploadAuth();
 
   // Use ref to maintain current files state during uploads
   const currentFilesRef = useRef<UploadedFile[]>(files);
@@ -49,20 +49,6 @@ export function ImageUpload({
 
   // Store abort controllers for each upload
   const [abortControllers, setAbortControllers] = useState<Map<string, AbortController>>(new Map());
-
-  /**
-   * Authenticates and retrieves upload credentials from ImageKit
-   */
-  const authenticator = async () => {
-    try {
-      const response: UploadAuthResponse = await axiosClient.get('/upload-auth');
-      const { signature, expire, token, publicKey } = response;
-      return { signature, expire, token, publicKey };
-    } catch (error) {
-      console.error('Authentication error:', error);
-      throw new Error('Authentication request failed');
-    }
-  };
 
   /**
    * Upload single file to ImageKit
@@ -78,8 +64,7 @@ export function ImageUpload({
 
     try {
       // Get authentication parameters
-      const authParams = await authenticator();
-      console.log('🏆 authParams:', authParams);
+      const authParams = await authenticate();
 
       // Upload file using ImageKit SDK
       const uploadResponse = await upload({
@@ -93,8 +78,6 @@ export function ImageUpload({
         },
         abortSignal: abortController.signal,
       });
-
-      console.log('🏆 uploadResponse:', uploadResponse);
 
       // Remove abort controller after successful upload
       setAbortControllers((prev) => {
@@ -245,10 +228,6 @@ export function ImageUpload({
     disabled: uploading,
   });
 
-  const removeFile = (fileId: string) => {
-    removeFileById(fileId);
-  };
-
   const setAsThumbnail = (index: number) => {
     onThumbnailChange?.(index);
   };
@@ -291,7 +270,7 @@ export function ImageUpload({
         <ImageIcon
           className={`mx-auto h-12 w-12 mb-4 ${error ? 'text-red-400' : 'text-gray-400'}`}
         />
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-foreground-secondary">
           <Upload className="inline w-4 h-4 mr-1" />
           {uploading ? 'Đang tải lên...' : 'Kéo thả ảnh vào đây hoặc'}{' '}
           <span className="text-blue-600 font-medium">Browse</span>
@@ -300,20 +279,7 @@ export function ImageUpload({
           PNG, JPG, WEBP, GIF tối đa 5MB • Tối đa {maxFiles} ảnh
           {required && <span className="text-red-500 ml-1">*</span>}
         </p>
-        {files.length > 0 && (
-          <p className="text-xs text-blue-600 mt-2">
-            Ảnh đầu tiên sẽ là thumbnail. Kéo thả để sắp xếp lại thứ tự.
-          </p>
-        )}
       </div>
-
-      {/* Validation Errors */}
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
 
       {uploadError && (
         <Alert variant="destructive">
@@ -345,15 +311,11 @@ export function ImageUpload({
                 key={file.id}
                 value={file}
                 dragListener={file.progress === 100}
-                className={`group ${file.progress !== 100 ? 'pointer-events-none' : ''}`}
+                className={`group ${file.progress !== 100 ? 'pointer-events-none' : 'cursor-grab'}`}
               >
                 <motion.div
                   layout
-                  className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
-                    index === thumbnailIndex
-                      ? 'bg-blue-50 border-blue-200 ring-2 ring-blue-100'
-                      : 'bg-gray-50 border-gray-200 hover:border-gray-300'
-                  }`}
+                  className={`flex items-center gap-3 p-3 rounded-lg border transition-all bg-gray-50 border-gray-200 hover:border-gray-300`}
                   whileHover={{ scale: file.progress === 100 ? 1.01 : 1 }}
                   whileDrag={{ scale: 1.05, zIndex: 1000 }}
                 >
@@ -363,7 +325,7 @@ export function ImageUpload({
                       <img
                         src={file.url}
                         alt={file.name}
-                        className="w-12 h-12 object-cover rounded border"
+                        className="w-12 h-12 object-cover rounded"
                         loading="lazy"
                       />
                     ) : (
@@ -374,7 +336,7 @@ export function ImageUpload({
 
                     {/* Thumbnail Badge */}
                     {index === thumbnailIndex && file.progress === 100 && (
-                      <Badge className="absolute -top-1 -right-1 text-xs bg-blue-600 text-white px-1 py-0">
+                      <Badge className="absolute -top-1 -left-1 text-xs bg-primary text-white p-0.5">
                         <Star className="w-3 h-3" />
                       </Badge>
                     )}
@@ -382,8 +344,10 @@ export function ImageUpload({
 
                   {/* File Info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm font-medium text-foreground truncate whitespace-break-spaces">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-foreground-secondary">
                       {(file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
 
@@ -392,15 +356,13 @@ export function ImageUpload({
                       <div className="mt-1">
                         <Progress value={file.progress} className="h-1" />
                         <p className="text-xs text-gray-500 mt-1">
-                          {file.progress === 0
-                            ? 'Đang chuẩn bị upload...'
-                            : `Đang tải lên... ${file.progress}%`}
+                          {`Đang tải lên... ${file.progress}%`}
                         </p>
                       </div>
                     )}
 
                     {file.progress === 100 && (
-                      <p className="text-xs text-green-600 mt-1">✓ Upload thành công</p>
+                      <p className="text-xs text-green-600 mt-1">✓ Tải thành công</p>
                     )}
                   </div>
 
@@ -414,7 +376,7 @@ export function ImageUpload({
                             variant="ghost"
                             size="sm"
                             onClick={() => setAsThumbnail(index)}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            className="text-primary hover:text-white hover:bg-primary cursor-pointer"
                             title="Đặt làm thumbnail"
                           >
                             <Star className="w-4 h-4" />
@@ -425,7 +387,7 @@ export function ImageUpload({
                             variant="ghost"
                             size="sm"
                             onClick={() => moveToTop(index)}
-                            className="text-gray-600 hover:text-gray-700 hover:bg-gray-100"
+                            className="text-secondary hover:text-white hover:bg-secondary cursor-pointer"
                             title="Di chuyển lên đầu"
                           >
                             <MoveUp className="w-4 h-4" />
@@ -437,8 +399,8 @@ export function ImageUpload({
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={() => removeFile(file.id)}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        onClick={() => removeFileById(file.id)}
+                        className="text-red-500 hover:text-white hover:bg-red-500 cursor-pointer"
                         title="Xóa ảnh"
                       >
                         <X className="w-4 h-4" />
@@ -452,7 +414,7 @@ export function ImageUpload({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => removeFile(file.id)}
+                      onClick={() => removeFileById(file.id)}
                       className="text-red-500 hover:text-red-700 hover:bg-red-50"
                       title="Hủy upload"
                     >
@@ -467,8 +429,11 @@ export function ImageUpload({
       )}
 
       {/* Empty State */}
-      {files.length === 0 && required && (
-        <div className="text-center text-red-500 text-sm">Vui lòng tải ít nhất 01 ảnh</div>
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
     </div>
   );

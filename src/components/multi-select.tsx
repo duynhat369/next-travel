@@ -30,6 +30,7 @@ export function MultiSelect({
   searchPlaceholder = 'Tìm kiếm...',
   allowCreate = false,
   maxItems,
+  ...props
 }: MultiSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -76,7 +77,8 @@ export function MultiSelect({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between h-auto min-h-10 p-2 border-input bg-white"
+            className="w-full justify-between h-auto min-h-10 p-2 border-input bg-white aria-invalid:border-destructive"
+            {...props}
           >
             <div className="flex flex-wrap gap-1">
               {selectedOptions.length > 0 ? (
