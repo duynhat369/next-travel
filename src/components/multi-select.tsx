@@ -132,7 +132,7 @@ export function MultiSelect({
                 onClick={handleCreate}
               >
                 <Plus className="mr-2 h-4 w-4" />
-                Tạo "{search}"
+                Tạo &quot;{search}&quot;
               </div>
             )}
           </div>
